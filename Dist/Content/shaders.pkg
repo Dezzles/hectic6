@@ -1,0 +1,153 @@
+{
+	"resources" : [
+		{
+			"type"			: "ScnShader",
+			"name"			: "default",
+			"source"		: "Content/Engine/default.hlsl",
+
+			"includepermutations" : [
+				"RENDER_FORWARD",
+				"PASS_MAIN",
+				"LIGHTING_NONE"
+			],
+
+			"excludepermutations" : [
+			],
+
+			"codetypes"	: [
+				"D3D11_4_0_level_9_3"
+			],
+
+			"backendtypes" : [
+				"GLSL",
+				"GLSL_ES",
+				"D3D11"
+			],
+
+			"entrypoints"		: {
+				"vertex" : 		"vertexMain",
+				"pixel" :		"pixelMain"
+			}
+		},
+
+		{
+			"type"			: "ScnShader",
+			"name"			: "normal_vis",
+			"source"		: "Content/Engine/normal_vis.hlsl",
+
+			"includepermutations" : [
+				"RENDER_FORWARD",
+				"PASS_MAIN",
+				"LIGHTING_NONE"
+			],
+
+			"excludepermutations" : [ 
+			],
+
+			"codetypes"	: [
+				"D3D11_4_0_level_9_3"
+			],
+
+			"backendtypes" : [
+				"GLSL",
+				"GLSL_ES",
+				"D3D11"
+			],
+
+			"entrypoints"		: {
+				"vertex" : 		"vertexMain",
+				"pixel" :		"pixelMain"
+			}
+		},
+
+		{
+			"type"			: "ScnShader",
+			"name"			: "textured",
+			"source"		: "Content/Engine/textured.hlsl",
+
+			"excludepermutations" : [
+				"RENDER_DEFERRED",
+				"RENDER_FORWARD_PLUS",
+				"PASS_SHADOW",
+				"MESH_INSTANCED_3D",
+				"LIGHTING_DIFFUSE"
+			],
+
+			"codetypes"	: [
+				"D3D11_4_0_level_9_3"
+			],
+
+			"backendtypes" : [
+				"GLSL",
+				"GLSL_ES",
+				"D3D11"
+			],
+
+			"entrypoints"		: {
+				"vertex" : 		"vertexMain",
+				"pixel" :		"pixelMain"
+			}
+		},
+
+		{
+			"type"			: "ScnShader",
+			"name"			: "fullscreen",
+			"source"		: "Content/Engine/fullscreen.hlsl",
+
+			"excludepermutations" : [
+				"RENDER_DEFERRED",
+				"RENDER_FORWARD_PLUS",
+				"PASS_SHADOW",
+				"MESH_INSTANCED_3D",
+				"LIGHTING_DIFFUSE"
+			],
+
+			"codetypes"	: [
+				"D3D11_4_0_level_9_3"
+			],
+
+			"backendtypes" : [
+				"GLSL",
+				"GLSL_ES",
+				"D3D11"
+			],
+
+			"entrypoints"		: {
+				"vertex" : 		"vertexMain",
+				"pixel" :		"pixelMain"
+			}
+		},
+
+
+		{
+			"type"			: "ScnShader",
+			"name"			: "geometry_test",
+			"source"		: "Content/Engine/geometry_test.hlsl",
+
+			"excludepermutations" : [
+				"RENDER_DEFERRED",
+				"RENDER_FORWARD_PLUS",
+				"PASS_SHADOW",
+				"MESH_INSTANCED_3D",
+				"LIGHTING_DIFFUSE"
+			],
+
+			"codetypes"	: [
+				"D3D11_4_0_level_9_3"
+			],
+
+			"backendtypes" : [
+				"GLSL",
+				"GLSL_ES",
+				"D3D11"
+			],
+
+			"entrypoints"		: {
+				"vertex" : 		"vertexMain",
+				//"geometry" : 	"geometryMain",
+				"pixel" :		"pixelMain"
+			}
+		}
+	]
+}
+

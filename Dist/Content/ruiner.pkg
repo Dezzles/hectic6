@@ -1,0 +1,99 @@
+{
+	"resources" : [
+		{
+			"type"		: "ScnModel",
+			"name"		: "character_jacketmale",
+			"source"	: "Content/Source/ruiner/character/jacketmale.md5mesh",
+			"materials" : {
+				"(.*)" :	"$(ScnMaterial:this.ruinerbody01)"
+			}
+		},
+
+		{
+			"type"		: "ScnAnimation",
+			"name"		: "character_sword_aim",
+			"source"	: "Content/Source/ruiner/character/sword_aim.md5anim"
+		},
+
+		{
+			"type"		: "ScnAnimation",
+			"name"		: "character_walk_fullbody",
+			"source"	: "Content/Source/ruiner/character/walk_fullbody.md5anim"
+		},
+
+		{
+			"type"		: "ScnAnimation",
+			"name"		: "character_walk_legsonly",
+			"source"	: "Content/Source/ruiner/character/walk_legsonly.md5anim"
+		},
+
+		{
+			"type"			: "ScnMaterial",
+			"name"			: "ruinerbody01",
+
+			// Shader
+			"shader"		: "$(ScnShader:shaders.textured)",
+
+			// Samplers
+			"samplers"		: {
+				"aDiffuseTex"	: {
+					"addressu" : "wrap",
+					"addressv" : "wrap",
+					"minfilter" : "linear_mipmap_linear",
+					"magfilter" : "linear"
+				},
+				"aNormalTex"	: {
+					"addressu" : "wrap",
+					"addressv" : "wrap",
+					"minfilter" : "linear_mipmap_linear",
+					"magfilter" : "linear"
+				}
+			},
+
+			// Textures
+			"textures"		: {
+				"aDiffuseTex"	: "$(ScnTexture:this.ruinerbody01_d)",
+				"aNormalTex"	: "$(ScnTexture:this.ruinerbody01_local)"
+			},
+
+			// New render state.
+			"renderstate" : {
+				"blendstate" : {
+					"rendertarget" : [
+						{
+							"enable" : false
+						}
+					]
+				},
+
+				"depthstencilstate" : {
+					"depthtestenable" : true,
+					"depthwriteenable" : true,
+					"depthfunc" : "lessequal",
+					"stencilenable" : false
+				},
+
+				"rasteriserstate" : {
+					"fillmode" : "solid",
+					"cullmode" : "none",
+					"depthclipenable" : true,
+					"antialiasedlineenable" : true
+				}
+			}
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "ruinerbody01_d",
+
+			"source"		: "Content/Source/ruiner/character/ruinerbody01_d.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "ruinerbody01_local",
+
+			"source"		: "Content/Source/ruiner/character/ruinerbody01_local.png"
+		}
+	]
+}

@@ -1,0 +1,282 @@
+{
+
+	"resources" : [
+		/////////////////////////////////////////////////////////////// 
+		// Entities.
+		{
+			"name"		:		"MenuEntity",
+			"type"		:		"ScnEntity",
+
+			"components" : [
+				{
+					"type"					: "ScnFontComponent",
+					"font"					: "$(ScnFont:fonts.courier)",
+					"material"				: "$(ScnMaterial:materials.font)"
+				},
+
+				{
+					"type"					: "ScnDebugRenderComponent",
+					"noofvertices"			: 65536,
+					"material"				: "$(ScnMaterial:materials.debugrender)",
+					"rendermask"			: 3
+				},
+
+				{
+					"type"					: "ScnCanvasComponent",
+					"noofvertices" 			: 8192,
+					"rendermask"			: 1
+				},
+
+				{
+					"type"					: "GaTestSelectionComponent",
+
+					"runautomatedtest"		: false,
+					"testmaxtime"			: 0.001,
+
+					"options"				: [
+						{ 
+							"name" : "Animation test",
+							"entity" : "$(ScnEntity:animation_test.TestEntity)"
+						},
+
+						{ 
+							"name" : "Render target test",
+							"entity" : "$(ScnEntity:render_target_test.TestEntity)"
+						},
+
+						{ 
+							"name" : "Shader test",
+							"entity" : "$(ScnEntity:shader_test.TestEntity)"
+						},
+
+						{ 
+							"name" : "Model test",
+							"entity" : "$(ScnEntity:model_test.TestEntity)"
+						},
+
+						{ 
+							"name" : "Particle test",
+							"entity" : "$(ScnEntity:particle_test.TestEntity)"
+						},
+
+						{ 
+							"name" : "Font test",
+							"entity" : "$(ScnEntity:font_test.TestEntity)"
+						},
+
+						{ 
+							"name" : "Physics test",
+							"entity" : "$(ScnEntity:physics_test.TestEntity)"
+						},
+
+						{ 
+							"name" : "Network test",
+							"entity" : "$(ScnEntity:network_test.TestEntity)"
+						},
+
+						{
+							"name" : "Sound test",
+							"entity" : "$(ScnEntity:sound_test.TestEntity)"
+						},
+
+						{
+							"name" : "Sprite test",
+							"entity" : "$(ScnEntity:sprite_test.TestEntity)"
+						}
+					]
+				}
+			]
+		},
+		
+		{
+			"name"		:		"CameraEntity",
+			"type"		:		"ScnEntity",
+
+			"components" : [
+				{
+					"type"					: "GaCameraComponent"
+				},
+
+				{
+					"type"					: "ScnSoundListenerComponent"
+				},
+
+				{
+					"type"					: "ScnViewComponent",
+					"x"						: 0.0,
+					"y"						: 0.0,
+					"width"					: 1.0,
+					"height"				: 1.0,
+					"near"					: 10.0,
+					"far"					: 500.0,
+					"horizontalfov"			: 0.75,
+					"verticalfov"			: 0.0,
+					"rendermask"			: 2,
+					"clearcolour"			: "1.0, 0.0, 1.0, 1.0",
+					"enablecleardepth"		: true,
+					"rendertarget"			: "$(ScnTexture:textures.test_rt)",
+					"depthstenciltarget"	: "$(ScnTexture:textures.test_dst)"					
+				},
+
+				{
+					"type"					: "ScnViewComponent",
+					"x"						: 0.0,
+					"y"						: 0.0,
+					"width"					: 1.0,
+					"height"				: 1.0,
+					"near"					: 1.0,
+					"far"					: 4000.0,
+					"horizontalfov"			: 0.75,
+					"verticalfov"			: 0.0,
+					"rendermask"			: 1
+				},
+
+				{
+					"type"					: "ScnPostProcessComponent",
+					"input" 				: "$(ScnTexture:pp_textures.pp_framebuffer)",
+
+					"rendermask"			: 2,
+
+					"nodes"					: [
+						// Copy into downsample buffer.
+						{
+							"inputtextures" : {
+								"aInputTexture0" : "$(ScnTexture:pp_textures.pp_framebuffer)"
+							},
+
+							"inputsamplers" : {
+								"aInputTexture0" : {
+									"addressu" : "clamp",
+									"addressv" : "clamp",
+									"minfilter" : "linear",
+									"magfilter" : "linear"
+								}
+							},
+
+							"outputtextures" : {
+								"0" : "$(ScnTexture:pp_textures.pp_downscale_0)"
+							},
+
+							"shader" : "$(ScnShader:pp_shaders.pp_copy)",
+							"renderstate" : {}
+						},
+
+						// H blur.
+						{
+							"inputtextures" : {
+								"aInputTexture0" : "$(ScnTexture:pp_textures.pp_downscale_0)"
+							},
+
+							"inputsamplers" : {
+								"aInputTexture0" : {
+									"addressu" : "clamp",
+									"addressv" : "clamp",
+									"minfilter" : "linear",
+									"magfilter" : "linear"
+								}
+							},
+
+							"outputtextures" : {
+								"0" : "$(ScnTexture:pp_textures.pp_working_0)"
+							},
+
+							"uniforms" : [
+								{	
+									"name" : "ScnShaderPostProcessConfigData",
+									"data" : {
+										"$Class" : "ScnShaderPostProcessConfigData"
+									}
+								},
+								{
+									"name" : "ScnShaderPostProcessBlurBlockData",
+									"data" : {
+										"$Class" : "ScnShaderPostProcessBlurBlockData",
+										"texturedimensions" : "0.0, 0.0, 0.0, 0.0",
+										"radius" : 8.0
+									}
+								}
+							],
+
+							"shader" : "$(ScnShader:pp_shaders.pp_h_blur)",
+							"renderstate" : {}
+						},
+
+						// V blur.
+						{
+							"inputtextures" : {
+								"aInputTexture0" : "$(ScnTexture:pp_textures.pp_working_0)"
+							},
+
+							"inputsamplers" : {
+								"aInputTexture0" : {
+									"addressu" : "clamp",
+									"addressv" : "clamp",
+									"minfilter" : "linear",
+									"magfilter" : "linear"
+								}
+							},
+
+							"outputtextures" : {
+								"0" : "$(ScnTexture:pp_textures.pp_working_1)"
+							},
+
+							"uniforms" : [
+								{	
+									"name" : "ScnShaderPostProcessConfigData",
+									"data" : {
+										"$Class" : "ScnShaderPostProcessConfigData"
+									}
+								},
+								{
+									"name" : "ScnShaderPostProcessBlurBlockData",
+									"data" : {
+										"$Class" : "ScnShaderPostProcessBlurBlockData",
+										"texturedimensions" : "0.0, 0.0, 0.0, 0.0",
+										"radius" : 8.0
+									}
+								}
+							],
+
+							"shader" : "$(ScnShader:pp_shaders.pp_v_blur)",
+							"renderstate" : {}
+						},
+
+						// Upsample back to framebuffer.
+						{
+							"inputtextures" : {
+								"aInputTexture0" : "$(ScnTexture:pp_textures.pp_working_1)"
+							},
+
+							"inputsamplers" : {
+								"aInputTexture0" : {
+									"addressu" : "clamp",
+									"addressv" : "clamp",
+									"minfilter" : "linear",
+									"magfilter" : "linear"
+								}
+							},
+
+							"outputtextures" : {
+								"0" : "$(ScnTexture:pp_textures.pp_framebuffer)"
+							},
+
+							"shader" : "$(ScnShader:pp_shaders.pp_copy)",
+							"renderstate" : {}
+						}
+					],
+
+					"output" 				: "$(ScnTexture:pp_textures.pp_framebuffer)"
+				},
+				
+				{
+					"type"					: "ScnLightComponent",
+					"name"					: "Sunlight",
+
+					"min"					: 16.0,
+					"mid"					: 2048.0,
+					"max"					: 1000000.0
+				}
+			]
+		}
+	]
+}
