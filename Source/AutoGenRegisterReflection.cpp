@@ -81,6 +81,8 @@
 #include "GaMindwaveVisualiserComponent.h"
 #include "GaMovingComponent.h"
 #include "GaNetworkTestComponent.h"
+#include "GaObjectComponent.h"
+#include "GaRoomComponent.h"
 #include "GaTestFontComponent.h"
 #include "GaTestModelComponent.h"
 #include "GaTestParticleComponent.h"
@@ -199,6 +201,8 @@ void AutoGenRegisterReflection()
 	GaMindwaveVisualiserComponent::StaticRegisterClass();
 	GaMovingComponent::StaticRegisterClass();
 	GaNetworkTestComponent::StaticRegisterClass();
+	GaObjectComponent::StaticRegisterClass();
+	GaRoomComponent::StaticRegisterClass();
 	GaTestFontComponent::StaticRegisterClass();
 	GaTestModelComponent::StaticRegisterClass();
 	GaTestParticleComponent::StaticRegisterClass();

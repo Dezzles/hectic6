@@ -22,8 +22,12 @@ void GaGameComponent::StaticRegisterClass()
 	{
 		new ReField( "Canvas_", &GaGameComponent::Canvas_, bcRFF_TRANSIENT ),
 		new ReField( "GameState_", &GaGameComponent::GameState_, bcRFF_TRANSIENT ),	
+		new ReField( "CurrentRoomEntity_", &GaGameComponent::CurrentRoomEntity_, bcRFF_TRANSIENT ),	
 
-		
+		new ReField( "Room_", &GaGameComponent::Room_, bcRFF_IMPORTER ),	
+		new ReField( "Rooms_", &GaGameComponent::Rooms_, bcRFF_IMPORTER ),	
+		new ReField( "Objects_", &GaGameComponent::Objects_, bcRFF_IMPORTER ),	
+
 	};
 
 	using namespace std::placeholders;
@@ -64,25 +68,22 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 
 	Canvas_ = getParentEntity()->getComponentAnyParentByType< ScnCanvasComponent >();
 
-	// Spawn rooms.
-	/*
-	for( BcF32 X = -Width; X <= Width; X += 2.0f )
-	{
-		ScnEntitySpawnParams EntityParams = 
+	// Subscribe to events
+	getParentEntity()->subscribe( gaEVT_FLOW_ACTION, this,
+		[ this ]( EvtID ID, const EvtBaseEvent& InEvent )
 		{
-			BcName( "SpriteEntity", Idx++ ), "sprite_test", "SpriteEntity",
-			MaMat4d(),
-			getParentEntity()
-		};
+			const auto& Event = InEvent.get< GaActionEvent >();
 
-		EntityParams.Transform_.translation( MaVec3d( 0.0f, 0.0f, X ) );
-		ScnCore::pImpl()->spawnEntity( EntityParams );
-	}*/
+			// If a door event, spawn room.
+			if( Event.SourceType_ == "DOOR" )
+			{
+				spawnRoom( Event.Target_ );
+			}
 
-	// Spawn objects.
-	// TODO.
+			return evtRET_PASS;
+		} );
 
-
+	spawnRoom( Room_ );
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -90,32 +91,43 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 //virtual
 void GaGameComponent::onDetach( ScnEntityWeakRef Parent )
 {
+	getParentEntity()->unsubscribeAll( this );
+
 	Super::onDetach( Parent );
-
 }
 
 //////////////////////////////////////////////////////////////////////////
-// onMoveToRoom
-eEvtReturn GaGameComponent::onMoveToRoom( EvtID ID, const EvtBaseEvent& InEvent )
+// spawnRoom
+void GaGameComponent::spawnRoom( const BcName& RoomName )
 {
-
-	return evtRET_PASS;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// onOpenButlerDialog
-eEvtReturn GaGameComponent::onOpenButlerDialog( EvtID ID, const EvtBaseEvent& InEvent )
-{
-
-	return evtRET_PASS;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// onOpenItemDialog
-eEvtReturn GaGameComponent::onOpenItemDialog( EvtID ID, const EvtBaseEvent& InEvent )
-{
-
-	return evtRET_PASS;
+	// Destroy old room.
+	if( CurrentRoomEntity_ )
+	{
+		ScnCore::pImpl()->removeEntity( CurrentRoomEntity_ );
+	}
+		
+	// Spawn room entity.
+	CurrentRoomEntity_ = ScnCore::pImpl()->spawnEntity( 
+		ScnEntitySpawnParams( 
+			RoomName, "game", RoomName,
+			MaMat4d(), getParentEntity() ) );
+	BcAssert( CurrentRoomEntity_ );
+	Room_ = *RoomName;
+	
+	// Spawn objects for room.
+	for( auto Object : Objects_ )
+	{
+		// If object's location is the room.
+		if( Object.second == Room_ )
+		{
+			auto ObjectName = Object.first;
+			auto ObjectEntity = ScnCore::pImpl()->spawnEntity( 
+				ScnEntitySpawnParams( 
+					ObjectName, "game", ObjectName,
+					MaMat4d(), CurrentRoomEntity_ ) );
+			BcAssert( ObjectEntity );
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -130,12 +142,18 @@ void GaGameComponent::setCanvasProjection( const ScnComponentList& Components )
 
 		OsClient* Client = OsCore::pImpl()->getClient( 0 );
 
-		BcF32 PixelW = static_cast< BcF32 >( Client->getWidth() ) / 3.0f;
-		BcF32 PixelH = static_cast< BcF32 >( Client->getHeight() ) / 3.0f;
+		BcF32 PixelW = static_cast< BcF32 >( Client->getWidth() );
+		BcF32 PixelH = static_cast< BcF32 >( Client->getHeight() );
 
+#if 0 // 0,0 centre.
 		BcF32 EdgeL = floorf( -PixelW / 2.0f );
-		BcF32 EdgeR = EdgeL + PixelW;
 		BcF32 EdgeT = floorf( -PixelH / 2.0f );
+#else // 0,0 top left.
+		BcF32 EdgeL = 0.0f;
+		BcF32 EdgeT = 0.0f;
+#endif
+
+		BcF32 EdgeR = EdgeL + PixelW;
 		BcF32 EdgeB = EdgeT + PixelH;
 
 		MaMat4d Projection;

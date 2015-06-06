@@ -15,11 +15,15 @@ enum GsEvents
 {
 	// All core events.
 	gaEVT_FLOW_FIRST = GA_EVENTGROUP_FLOW,
-	gaEVT_FLOW_MOVE_TO_ROOM,
-	gaEVT_CORE_OPEN_BUTLER_DIALOG,
-	gaEVT_CORE_OPEN_ITEM_DIALOG,
+	gaEVT_FLOW_ACTION,
 };
 
+struct GaActionEvent : EvtEvent< GaActionEvent >
+{
+	BcName SourceName_;
+	BcName SourceType_;
+	BcName Target_;
+};
 
 //////////////////////////////////////////////////////////////////////////
 // GaGameComponentRef
@@ -39,21 +43,7 @@ public:
 	virtual void onAttach( ScnEntityWeakRef Parent );
 	virtual void onDetach( ScnEntityWeakRef Parent );
 
-	/**
-	 * Called to move to a new room.
-	 */
-	eEvtReturn onMoveToRoom( EvtID ID, const EvtBaseEvent& InEvent );
-
-	/**
-	 * Called to open butler dialog.
-	 */
-	eEvtReturn onOpenButlerDialog( EvtID ID, const EvtBaseEvent& InEvent );
-
-	/**
-	 * Called to open item dialog.
-	 */
-	eEvtReturn onOpenItemDialog( EvtID ID, const EvtBaseEvent& InEvent );
-
+	void spawnRoom( const BcName& RoomName );
 
 private:
 	static void setCanvasProjection( const ScnComponentList& Components );
@@ -69,4 +59,11 @@ private:
 	};
 
 	GameState GameState_;
+	ScnEntityRef CurrentRoomEntity_;
+	
+	// TODO: Use BcNames...
+	std::string Room_;
+	std::list< std::string > Rooms_;
+	std::map< std::string, std::string > Objects_;
+
 };

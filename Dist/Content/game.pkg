@@ -24,40 +24,109 @@
 
 				{
 					"$Class" : "GaGameComponent",
-					"type" : "GaGameComponent"
+					"type" : "GaGameComponent",
+
+					"room" : "ROOM_LOBBY",
+
+					"rooms" : [
+						"ROOM_LOBBY",
+						"ROOM_KITCHEN"
+					],
+
+					"objects" : {
+						// Lobby
+						"PERSON_DEZZLES" : "ROOM_LOBBY",
+						"DOOR_KITCHEN" : "ROOM_LOBBY",
+
+						// Kitchen.
+						"DOOR_LOBBY" : "ROOM_KITCHEN"
+					}
 				}
 
 			]
 		},
 
 		{
-			"name" : "SpriteEntity",
+			"name" : "ROOM_LOBBY",
 			"$Class" : "ScnEntity",
 			"type" : "ScnEntity",
 
 			"components" : [
 				{
-					"$Class" : "ScnSpriteComponent",
-					"type" : "ScnSpriteComponent",
+					"$Class" : "GaRoomComponent",
+					"type" : "GaRoomComponent",
 
-					"materialname" : "spritesheet",
-					"position" : "0.0, 0.0",
-					"size" : "16.0, 16.0",
-					"colour" : "1.0, 1.0, 1.0, 1.0",
-					"index" : 0,
-					"center" : true,
+					"roomname" : "Lobby"
+				}
+			]
+		},
 
-					"animationrate" : 6.0,
-					"animation" : "idle",
+		{
+			"name" : "ROOM_KITCHEN",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
 
-					"animations" : {
-						"idle" : {
-							"next" : "idle",
-							"keys" : [ 0, 1 ,0, 2 ]
-						}
-					}
+			"components" : [
+				{
+					"$Class" : "GaRoomComponent",
+					"type" : "GaRoomComponent",
+
+					"roomname" : "Kitchen"
+				}
+			]
+		},
+
+
+
+		{
+			"name" : "PERSON_DEZZLES",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Dezzles",
+					"objecttype" : "PERSON"
+				}
+			]
+		},
+
+		{
+			"name" : "DOOR_KITCHEN",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Kitchen",
+					"objecttype" : "DOOR",
+					"target" : "ROOM_KITCHEN"
+				}
+			]
+		},
+
+		{
+			"name" : "DOOR_LOBBY",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Lobby",
+					"objecttype" : "DOOR",
+					"target" : "ROOM_LOBBY"
 				}
 			]
 		}
+
 	]
 }
