@@ -60,7 +60,9 @@ void GaGameComponent::StaticRegisterClass()
 		new ReField( "Room_", &GaGameComponent::Room_, bcRFF_IMPORTER ),	
 		new ReField( "Rooms_", &GaGameComponent::Rooms_, bcRFF_IMPORTER ),	
 		new ReField( "Objects_", &GaGameComponent::Objects_, bcRFF_IMPORTER ),	
-		new ReField( "Solution_", &GaGameComponent::Solution_, bcRFF_IMPORTER ),	
+		new ReField( "Solution_", &GaGameComponent::Solution_, bcRFF_IMPORTER ),
+		new ReField( "AttemptedSolutionObjects_", &GaGameComponent::AttemptedSolutionObjects_, bcRFF_TRANSIENT ),
+		new ReField( "CorrectSolutionObjects_", &GaGameComponent::CorrectSolutionObjects_, bcRFF_TRANSIENT ),
 	};
 
 	using namespace std::placeholders;
@@ -134,7 +136,9 @@ void GaGameComponent::StaticRegisterClass()
 // Ctor
 GaGameComponent::GaGameComponent():
 	Canvas_( nullptr ),
-	GameState_( GameState::IDLE )
+	GameState_( GameState::IDLE ),
+	AttemptedSolutionObjects_( 0 ),
+	CorrectSolutionObjects_( 0 )
 {
 
 }
@@ -186,34 +190,47 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 					{
 						GaModalOptionGroup( "MODAL", "Do you think you've solved it?",
 							{
-								GaModalOption( "YES", "Yes!" ),
+								GaModalOption( "RESET_ATTEMPTS", "Yes!" ),
 								GaModalOption( "CLOSE", "No" )
 							} ),
 					};
 
+					// Reset correct.
+					AttemptedSolutionObjects_ = 0;
+					CorrectSolutionObjects_ = 0;
+
 					//
-#if 0
 					for( const auto& SolutionObject : Solution_ )
 					{
 						bool HaveSolutionObject = false;
 
-						auto ModalOption = GaModalOptionGroup( "MODAL", "Do you think you've solved it?",
-							{
-								GaModalOption( "YES", "Yes!" ),
-								GaModalOption( "CLOSE", "No" )
-							} );
+						auto ModalOption = GaModalOptionGroup( "MODAL", SolutionObject.Question_, {} );
 
 						for( const std::string& Info : Infos_ )
 						{
 							if( Info.substr( 0, SolutionObject.Type_.size() ) == SolutionObject.Type_ )
 							{
 								HaveSolutionObject = true;
+
+								ModalOption.Options_.emplace_back( 
+									GaModalOption( Info, Info ) );
 							}
 						}
-
-
+						
+						if( HaveSolutionObject == false )
+						{
+							OptionGroups.clear();
+							OptionGroups.emplace_back( 
+								GaModalOptionGroup( "MODAL", SolutionObject.MissingMessage_,
+								{
+									GaModalOption( "CLOSE", "Ok." ),
+								} ) );
+						}
+						else
+						{
+							OptionGroups.emplace_back( ModalOption );
+						}
 					}
-#endif
 
 					useObject( Event.SourceName_ );
 					spawnModal( "MODAL", OptionGroups );
@@ -226,6 +243,45 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 				{
 					ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
 					ModalDialogEntity_ = nullptr;
+				}
+
+				if( Event.SourceType_ == "SELECTION" )
+				{
+					if( Event.Target_ == "RESET_ATTEMPTS" )
+					{
+						AttemptedSolutionObjects_ = 0;
+						CorrectSolutionObjects_ = 0;
+					}
+					else
+					{
+						// Test for solution.
+						auto SolutionIt = std::find_if( Solution_.begin(), Solution_.end(),
+							[ this, &Event ]( const GaSolutionObject& Solution )
+							{
+								if( Event.Target_ == Solution.Name_ )
+								{
+									return true;
+								}
+								return false;
+							} );
+						AttemptedSolutionObjects_++;
+						if( SolutionIt != Solution_.end() )
+						{
+							CorrectSolutionObjects_++;
+						}
+
+						if( AttemptedSolutionObjects_ == Solution_.size() )
+						{
+							if( CorrectSolutionObjects_ == AttemptedSolutionObjects_ )
+							{
+								PSY_LOG( "WIN CONDITION!" );
+							}
+							else
+							{
+								PSY_LOG( "LOSE CONDITION!" );
+							}
+						}
+					}
 				}
 			}
 
