@@ -39,8 +39,6 @@ struct GaGameObject
 	std::string Room_;
 	std::string InfoText_;
 	std::vector< std::string > Infos_;
-
-	BcBool IsUnlocked_ = BcFalse;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -81,5 +79,5 @@ private:
 	std::string Room_;
 	std::list< std::string > Rooms_;
 	std::list< GaGameObject > Objects_;
-
+	std::set< std::string > Infos_;
 };

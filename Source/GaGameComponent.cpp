@@ -27,8 +27,6 @@ void GaGameObject::StaticRegisterClass()
 		new ReField( "Room_", &GaGameObject::Room_ ),
 		new ReField( "InfoText_", &GaGameObject::InfoText_ ),
 		new ReField( "Infos_", &GaGameObject::Infos_ ),
-		new ReField( "IsUnlocked_", &GaGameObject::IsUnlocked_ ),
-
 	};
 
 	ReRegisterClass< GaGameObject >( Fields );
@@ -105,13 +103,10 @@ void GaGameComponent::StaticRegisterClass()
 						{
 							GaGameComponentRef Component( InComponent );
 
-							ImGui::Text( "Unlocked objects:" );
-							for( const auto& Object : Component->Objects_ )
+							ImGui::Text( "Unlocked info:" );
+							for( const auto& Info : Component->Infos_ )
 							{
-								if( Object.IsUnlocked_ )
-								{
-									ImGui::BulletText( Object.Object_.c_str() );
-								}
+								ImGui::BulletText( Info.c_str() );
 							}
 						}
 
@@ -215,8 +210,7 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 	for( const auto& Object : Objects_ )
 	{
 		// If object's location is the room.
-		if( Object.Room_ == Room_ &&
-			Object.Object_ != Object.Room_ )
+		if( Object.Room_ == Room_ )
 		{
 			auto ObjectEntity = ScnCore::pImpl()->spawnEntity( 
 				ScnEntitySpawnParams( 
@@ -258,16 +252,12 @@ void GaGameComponent::spawnModal( const BcName& ModalName, const BcName& Target 
 // useObject
 void GaGameComponent::useObject( const BcName& ObjectName )
 {
+	Infos_.insert( *ObjectName );
 	if( auto* FoundObject = findObject( ObjectName ) )
 	{
-		FoundObject->IsUnlocked_ = BcTrue;
 		for( const auto& InfoName : FoundObject->Infos_ )
 		{
-			auto* FoundInfo = findObject( InfoName );
-			if( FoundInfo )
-			{
-				FoundInfo->IsUnlocked_ = BcTrue;
-			}
+			Infos_.insert( InfoName );
 		}
 	}
 }

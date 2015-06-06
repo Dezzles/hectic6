@@ -36,11 +36,6 @@
 					"objects" : [
 						// Lobby
 						{
-							"Object_" : "ROOM_LOBBY",
-							"Room_" : "ROOM_LOBBY"
-						},
-
-						{
 							"Object_" : "PERSON_DEZZLES",
 							"Room_" : "ROOM_LOBBY",
 							"InfoText_" : "Amy is in the kitchen.",
@@ -59,11 +54,6 @@
 						},
 						
 						// Kitchen.
-						{
-							"Object_" : "ROOM_KITCHEN",
-							"Room_" : "ROOM_KITCHEN"
-						},
-
 						{
 							"Object_" : "PERSON_AMY",
 							"Room_" : "ROOM_KITCHEN",
@@ -207,6 +197,19 @@
 					"unlock" : [
 						"ROOM_KITCHEN"
 					]
+				}
+			]
+		},
+
+		{
+			"name" : "BUTLER",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaButlerComponent",
+					"type" : "GaButlerComponent"
 				}
 			]
 		}

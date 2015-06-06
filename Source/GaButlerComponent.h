@@ -6,26 +6,30 @@
 #include "System/Scene/Rendering/ScnMaterial.h"
 
 //////////////////////////////////////////////////////////////////////////
-// GaRoomComponentRef
-typedef ReObjectRef< class GaRoomComponent > GaRoomComponentRef;
+// GaButlerComponentRef
+typedef ReObjectRef< class GaButlerComponent > GaButlerComponentRef;
 
 //////////////////////////////////////////////////////////////////////////
-// GaRoomComponent
-class GaRoomComponent:
+// GaButlerComponent
+class GaButlerComponent:
 	public ScnComponent
 {
 public:
-	REFLECTION_DECLARE_DERIVED( GaRoomComponent, ScnComponent );
+	REFLECTION_DECLARE_DERIVED( GaButlerComponent, ScnComponent );
 
-	GaRoomComponent();
-	virtual ~GaRoomComponent();
+	GaButlerComponent();
+	virtual ~GaButlerComponent();
 	
 	virtual void onAttach( ScnEntityWeakRef Parent );
 	virtual void onDetach( ScnEntityWeakRef Parent );
 
 private:
 	class ScnCanvasComponent* Canvas_;
+	
+	enum class SelectionState
+	{
+		IDLE
+	};
 
-	std::string RoomName_;
-
+	SelectionState SelectionState_;
 };
