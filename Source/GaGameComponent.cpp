@@ -1,5 +1,6 @@
 #include "GaGameComponent.h"
 #include "GaModalComponent.h"
+#include "GaObjectComponent.h"
 
 #include "System/Scene/Rendering/ScnCanvasComponent.h"
 
@@ -28,6 +29,8 @@ void GaGameObject::StaticRegisterClass()
 		new ReField( "Room_", &GaGameObject::Room_ ),
 		new ReField( "InfoText_", &GaGameObject::InfoText_ ),
 		new ReField( "Infos_", &GaGameObject::Infos_ ),
+
+		new ReField( "Target_", &GaGameObject::Target_ ),
 	};
 
 	ReRegisterClass< GaGameObject >( Fields );
@@ -178,11 +181,11 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 		{
 			int timeLength = person->Information_[ Idx2 ]->EndTimeId_ - person->Information_[ Idx2 ]->StartTimeId_;
 			start += sprintf( &buffer[start], "I was with PERSON_%d in the ROOM_%d at %d:00 for %d hour%s.\n", 
-				person->Information_[ Idx2 ]->PersonId_ ,
+				person->Information_[ Idx2 ]->TargetId_ , // TargetId.
 				gen.Rooms_.GetItemById(person->Information_[ Idx2 ]->RoomId_ )->NormalRoomId_, 
 				person->Information_[ Idx2 ]->StartTimeId_ + 11,
 				timeLength, timeLength > 1 ? "s" : "");
-			sprintf( buffer2, "PERSON_%d", person->Information_[ Idx2 ]->PersonId_ );
+			sprintf( buffer2, "PERSON_%d", person->Information_[ Idx2 ]->TargetId_ );
 			obj.Infos_.push_back( buffer2 );
 			sprintf( buffer2, "ROOM_%d", gen.Rooms_.GetItemById( person->Information_[ Idx2 ]->RoomId_ )->NormalRoomId_ );
 			obj.Infos_.push_back( buffer2 );
@@ -195,9 +198,9 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 	{
 		WorldGen::Room* room = gen.Rooms_.GetItem( Idx );
 		GaGameObject obj;
-		sprintf( buffer, "DOOR_%dLeft", room->NormalRoomId_ );
+		sprintf( buffer, "DOOR_LEFT", room->NormalRoomId_ );
 		obj.Object_ = buffer;
-		sprintf( buffer, "ROOM_", room->NormalRoomId_ );
+		sprintf( buffer, "ROOM_%d", room->NormalRoomId_ );
 		obj.Room_= buffer;
 		if ( Idx == 0 )
 		{
@@ -215,7 +218,7 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 		if ( Idx < gen.Rooms_.Size() - 1 )
 		{
 			GaGameObject obj;
-			sprintf( buffer, "DOOR_%dRight", room->NormalRoomId_ );
+			sprintf( buffer, "DOOR_RIGHT", room->NormalRoomId_ );
 			obj.Object_ = buffer;
 			sprintf( buffer, "ROOM_%d", room->NormalRoomId_ );
 			obj.Room_ = buffer;
@@ -401,6 +404,13 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 					Object.Object_, getParentEntity()->getBasis()->getOwner()->getName(), Object.Object_,
 					MaMat4d(), CurrentRoomEntity_ ) );
 			BcAssert( ObjectEntity );
+
+			// Override target.
+			if( !Object.Target_.empty() )
+			{
+				auto ObjectComponent = ObjectEntity->getComponentByType< GaObjectComponent >();
+				ObjectComponent->setup( Object.Object_, ObjectComponent->ObjectType_, Object.Target_, nullptr );
+			}
 		}
 	}
 }

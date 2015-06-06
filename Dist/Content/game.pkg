@@ -360,7 +360,7 @@
 		},
 
 		{
-			"name" : "DOOR_KITCHEN",
+			"name" : "DOOR_LEFT",
 			"$Class" : "ScnEntity",
 			"type" : "ScnEntity",
 
@@ -369,15 +369,17 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Kitchen",
+					"objectname" : "DOOR_LEFT",
 					"objecttype" : "DOOR",
-					"target" : "ROOM_KITCHEN"
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.doorL)"
 				}
 			]
 		},
 
 		{
-			"name" : "DOOR_LOBBY",
+			"name" : "DOOR_RIGHT",
 			"$Class" : "ScnEntity",
 			"type" : "ScnEntity",
 
@@ -386,9 +388,11 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Lobby",
+					"objectname" : "DOOR_RIGHT",
 					"objecttype" : "DOOR",
-					"target" : "ROOM_LOBBY"
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.doorR)"
 				}
 			]
 		},

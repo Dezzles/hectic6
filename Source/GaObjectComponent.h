@@ -32,7 +32,7 @@ public:
 private:
 	static void setCanvasProjection( const ScnComponentList& Components );
 
-private:
+public:
 	class ScnCanvasComponent* Canvas_;
 
 	std::string ObjectName_;
