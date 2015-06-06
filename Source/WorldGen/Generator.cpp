@@ -78,6 +78,8 @@ WorldGen::Generator::Generator( int Width, int Height, int Seed )
 			++info->EndTimeId_;
 		}
 	}
+
+	GenerateClues();
 }
 
 
@@ -125,30 +127,46 @@ void WorldGen::Generator::Print()
 	}
 
 	printf( "\n" );
+
+	printf("Murderer: \t%d\nRoom: \t\t%d\nTime:\t\t%d\n", Murder_.PersonId_, Murder_.RoomId_, Murder_.TimeId_);
+
+	printf( "\n" );
+	for ( int Idx1 = 0; Idx1 < People_.Size(); ++Idx1 )
+	{
+		Person* p = People_.GetItem( Idx1 );
+		printf("Person %c\n", p->Id_ + 'A');
+		for ( int Idx2 = 0; Idx2 < p->Information_.size(); ++Idx2 )
+		{
+			printf("\t%c\t%c\t%d-%d\n", p->Information_[ Idx2 ]->RoomId_ + 'Q', p->Information_[Idx2]->TargetId_ + 'A',
+				p->Information_[ Idx2 ]->StartTimeId_ + 13, p->Information_[ Idx2 ]->EndTimeId_ + 13 );
+		}
+
+		printf( "\n" );
+	}
+}
+
+void WorldGen::Generator::GenerateClues()
+{
+	using namespace cpplinq;
 	auto c2 = from_iterators( Information_.Internal().begin(), Information_.Internal().end() )
 		>> join(
 		from_iterators( Information_.Internal().begin(), Information_.Internal().end() ),
 		[ ]( Information* const & c ) {return c->RoomId_; },
 		[ ]( Information* const & ca ) {return ca->RoomId_; },
 		[ ]( Information* const & c, Information* const & ca ) {return std::make_pair( c, ca ); } )
-		>> where([ ](std::pair<Information*, Information*> const & p) 
-			{
-				return (p.first->PersonId_ < p.second->PersonId_) &&
-					(p.first->RoomId_ == p.second->RoomId_ ) &&
-					!( ( p.first->EndTimeId_ <= p.second->StartTimeId_ ) ||
-						(p.first->StartTimeId_ >= p.second->EndTimeId_ )
-					);
-			})
+		>> where( [ ]( std::pair<Information*, Information*> const & p )
+	{
+		return ( p.first->PersonId_ < p.second->PersonId_ ) &&
+			( p.first->RoomId_ == p.second->RoomId_ ) &&
+			!( ( p.first->EndTimeId_ <= p.second->StartTimeId_ ) ||
+			( p.first->StartTimeId_ >= p.second->EndTimeId_ )
+			);
+	} )
 		>> to_vector();
 	for ( int Idx = 0; Idx < c2.size(); ++Idx )
 	{
 		Information* infoA = c2[ Idx ].first;
 		Information* infoB = c2[ Idx ].second;
-		printf("OVERLAP");
-		printf( "\t%d\t%d\t%d\t%d\t%d\n", infoA->Id_, infoA->RoomId_, infoA->PersonId_, infoA->StartTimeId_, infoA->EndTimeId_ );
-		printf( "\t%d\t%d\t%d\t%d\t%d\n", infoB->Id_, infoB->RoomId_, infoB->PersonId_, infoB->StartTimeId_, infoB->EndTimeId_ );
-		printf("\n");
-
 		InfoForPlayer* data = PlayerInfo_.Create();
 
 		int personACount = People_.GetItemById( infoA->PersonId_ )->Information_.size();
@@ -173,25 +191,7 @@ void WorldGen::Generator::Print()
 		data->StartTimeId_ = ( infoA->StartTimeId_ < infoB->StartTimeId_ ) ? infoB->StartTimeId_ : infoA->StartTimeId_;
 		data->EndTimeId_ = ( infoA->EndTimeId_ < infoB->EndTimeId_ ) ? infoA->EndTimeId_ : infoB->EndTimeId_;
 		data->RoomId_ = infoA->RoomId_;
-		People_.GetItemById(data->PersonId_)->Information_.push_back(data);
+		People_.GetItemById( data->PersonId_ )->Information_.push_back( data );
 	}
-	
 
-	printf( "\n" );
-
-	printf("Murderer: \t%d\nRoom: \t\t%d\nTime:\t\t%d\n", Murder_.PersonId_, Murder_.RoomId_, Murder_.TimeId_);
-
-	printf( "\n" );
-	for ( int Idx1 = 0; Idx1 < People_.Size(); ++Idx1 )
-	{
-		Person* p = People_.GetItem( Idx1 );
-		printf("Person %c\n", p->Id_ + 'A');
-		for ( int Idx2 = 0; Idx2 < p->Information_.size(); ++Idx2 )
-		{
-			printf("\t%c\t%c\t%d-%d\n", p->Information_[ Idx2 ]->RoomId_ + 'Q', p->Information_[Idx2]->TargetId_ + 'A',
-				p->Information_[ Idx2 ]->StartTimeId_ + 13, p->Information_[ Idx2 ]->EndTimeId_ + 13 );
-		}
-
-		printf( "\n" );
-	}
 }

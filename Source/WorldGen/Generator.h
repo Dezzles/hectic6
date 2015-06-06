@@ -8,6 +8,7 @@ namespace WorldGen
 	{
 	public:
 		Generator( int Width, int Height, int Seed );
+		void GenerateClues();
 		void Print();
 
 		Wrapper<Room> Rooms_;
