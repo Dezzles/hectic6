@@ -3,6 +3,7 @@
 #include <vector>
 namespace WorldGen
 {
+	class InfoForPlayer;
 	template < class T >
 	class Wrapper
 	{
@@ -89,7 +90,7 @@ namespace WorldGen
 	{
 	public:
 		Person( int Id );
-		int InformationId_;
+		std::vector<InfoForPlayer*> Information_;
 	};
 
 	class Time
@@ -118,6 +119,19 @@ namespace WorldGen
 		int RoomId_;
 		int TimeId_;
 		int PersonId_;
+	};
+
+	class InfoForPlayer
+		: public Data
+	{
+	public:
+		InfoForPlayer( int Id );
+
+		int RoomId_;
+		int StartTimeId_;
+		int EndTimeId_;
+		int PersonId_;
+		int TargetId_;
 	};
 
 }

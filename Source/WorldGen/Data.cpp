@@ -44,3 +44,9 @@ WorldGen::Murder::Murder( int Id )
 {
 
 }
+
+WorldGen::InfoForPlayer::InfoForPlayer( int Id )
+	: Data( Id, "InfoForPlayer" )
+{
+
+}

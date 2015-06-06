@@ -103,11 +103,11 @@ void WorldGen::Generator::Print()
 		printf( "%s\n", Times_.GetItem( Idx )->ToString().c_str() );
 	}
 
-	printf( "Id\tRoom\tPerson\tStart\tFinish\n" );
+	printf( "\tId\tRoom\tPerson\tStart\tFinish\n" );
 	for ( int Idx = 0; Idx < Information_.Size(); ++Idx )
 	{
 		Information* info = Information_.GetItem( Idx );
-		printf( "%d\t%d\t%d\t%d\t%d\n", info->Id_, info->RoomId_, info->PersonId_, info->StartTimeId_, info->EndTimeId_ );
+		printf( "\t%d\t%d\t%d\t%d\t%d\n", info->Id_, info->RoomId_, info->PersonId_, info->StartTimeId_, info->EndTimeId_ );
 	}
 	printf( "\n" );
 
@@ -121,7 +121,7 @@ void WorldGen::Generator::Print()
 	for ( int Idx = 0; Idx < c.size(); ++Idx )
 	{
 		Information* info = c[ Idx ];
-		printf( "%d\t%d\t%d\t%d\t%d\n", info->Id_, info->RoomId_, info->PersonId_, info->StartTimeId_, info->EndTimeId_ );
+		printf( "\t%d\t%d\t%d\t%d\t%d\n", info->Id_, info->RoomId_, info->PersonId_, info->StartTimeId_, info->EndTimeId_ );
 	}
 
 	printf( "\n" );
@@ -148,9 +148,50 @@ void WorldGen::Generator::Print()
 		printf( "\t%d\t%d\t%d\t%d\t%d\n", infoA->Id_, infoA->RoomId_, infoA->PersonId_, infoA->StartTimeId_, infoA->EndTimeId_ );
 		printf( "\t%d\t%d\t%d\t%d\t%d\n", infoB->Id_, infoB->RoomId_, infoB->PersonId_, infoB->StartTimeId_, infoB->EndTimeId_ );
 		printf("\n");
+
+		InfoForPlayer* data = PlayerInfo_.Create();
+
+		int personACount = People_.GetItemById( infoA->PersonId_ )->Information_.size();
+		int personBCount = People_.GetItemById( infoB->PersonId_ )->Information_.size();
+		int infoGiver = infoA->PersonId_;
+		int target = infoB->PersonId_;
+		if ( personACount > personBCount )
+		{
+			infoGiver = infoB->PersonId_;
+			target = infoA->PersonId_;
+		}
+		if ( personACount == personBCount )
+		{
+			if ( rand() % 2 == 1 )
+			{
+				infoGiver = infoB->PersonId_;
+				target = infoA->PersonId_;
+			}
+		}
+		data->PersonId_ = infoGiver;
+		data->TargetId_ = target;
+		data->StartTimeId_ = ( infoA->StartTimeId_ < infoB->StartTimeId_ ) ? infoB->StartTimeId_ : infoA->StartTimeId_;
+		data->EndTimeId_ = ( infoA->EndTimeId_ < infoB->EndTimeId_ ) ? infoA->EndTimeId_ : infoB->EndTimeId_;
+		data->RoomId_ = infoA->RoomId_;
+		People_.GetItemById(data->PersonId_)->Information_.push_back(data);
 	}
+	
 
 	printf( "\n" );
 
 	printf("Murderer: \t%d\nRoom: \t\t%d\nTime:\t\t%d\n", Murder_.PersonId_, Murder_.RoomId_, Murder_.TimeId_);
+
+	printf( "\n" );
+	for ( int Idx1 = 0; Idx1 < People_.Size(); ++Idx1 )
+	{
+		Person* p = People_.GetItem( Idx1 );
+		printf("Person %c\n", p->Id_ + 'A');
+		for ( int Idx2 = 0; Idx2 < p->Information_.size(); ++Idx2 )
+		{
+			printf("\t%c\t%c\t%d-%d\n", p->Information_[ Idx2 ]->RoomId_ + 'Q', p->Information_[Idx2]->TargetId_ + 'A',
+				p->Information_[ Idx2 ]->StartTimeId_ + 13, p->Information_[ Idx2 ]->EndTimeId_ + 13 );
+		}
+
+		printf( "\n" );
+	}
 }

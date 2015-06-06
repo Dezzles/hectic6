@@ -4,7 +4,7 @@
 int main()
 {
 
-	WorldGen::Generator generator( 5, 4, 0x845efad7 );
+	WorldGen::Generator generator( 4, 4, 0x845efad7 );
 	generator.Print();
 
 	return 0;

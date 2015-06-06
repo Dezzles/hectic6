@@ -14,6 +14,7 @@ namespace WorldGen
 		Wrapper<Person> People_;
 		Wrapper<Time> Times_;
 		Wrapper<Information> Information_;
+		Wrapper<InfoForPlayer> PlayerInfo_;
 		Murder Murder_;
 	private:
 		Mapper Mapper_;
