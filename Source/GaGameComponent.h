@@ -40,6 +40,8 @@ struct GaGameObject
 	std::string Room_; // Name of the room they're in ( ROOM_{number} )
 	std::string InfoText_; // Information returned by entity
 	std::vector< std::string > Infos_; // What information is revealed ( {TYPE}_{NAME} )
+
+	std::string Target_;
 };
 
 //////////////////////////////////////////////////////////////////////////

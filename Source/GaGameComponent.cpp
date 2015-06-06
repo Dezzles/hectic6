@@ -195,7 +195,39 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 	{
 		WorldGen::Room* room = gen.Rooms_.GetItem( Idx );
 		GaGameObject obj;
-		sprintf(buffer, "DOOR_%dLeft", room->NormalRoomId_);
+		sprintf( buffer, "DOOR_%dLeft", room->NormalRoomId_ );
+		obj.Object_ = buffer;
+		sprintf( buffer, "ROOM_", room->NormalRoomId_ );
+		obj.Room_= buffer;
+		if ( Idx == 0 )
+		{
+			obj.Target_ = "ROOM_LOBBY";
+			obj.Infos_.push_back( "ROOM_LOBBY" );
+		}
+		else
+		{
+			sprintf(buffer, "ROOM_%d", Idx - 1);
+			obj.Target_ = buffer;
+			obj.Infos_.push_back( buffer );
+		}
+		Objects_.push_back(obj);
+
+		if ( Idx < gen.Rooms_.Size() - 1 )
+		{
+			GaGameObject obj;
+			sprintf( buffer, "DOOR_%dRight", room->NormalRoomId_ );
+			obj.Object_ = buffer;
+			sprintf( buffer, "ROOM_", room->NormalRoomId_ );
+			obj.Room_ = buffer;
+			if ( Idx == 0 )
+			{
+				sprintf( buffer, "ROOM_%d", Idx + 1 );
+				obj.Target_ = buffer;
+				obj.Infos_.push_back( buffer );
+			}
+			Objects_.push_back( obj );
+
+		}
 	}
 
 	// Subscribe to events

@@ -59,53 +59,8 @@
 							"Infos_" : [
 								"ROOM_LOUNGE"
 							]
-						},
-
-						// Lounge
-						{
-							"Object_" : "PERSON_DEZZLES",
-							"Room_" : "ROOM_LOUNGE",
-							"InfoText_" : "Amy is in the kitchen.",
-							"Infos_" : [
-								"PERSON_AMY",
-								"ROOM_KITCHEN"
-							]
-						},
-
-						{
-							"Object_" : "DOOR_LOBBY",
-							"Room_" : "ROOM_LOUNGE",
-							"Infos_" : [
-								"ROOM_LOBBY"
-							]
-						},
-
-						{
-							"Object_" : "DOOR_KITCHEN",
-							"Room_" : "ROOM_LOUNGE",
-							"Infos_" : [
-								"ROOM_KITCHEN"
-							]
-						},
-						
-						// Kitchen.
-						{
-							"Object_" : "PERSON_AMY",
-							"Room_" : "ROOM_KITCHEN",
-							"InfoText_" : "Dezzles is in the lounge.",
-							"Infos_" : [
-								"PERSON_DEZZLES",
-								"ROOM_KITCHEN"
-							]
-						},
-
-						{
-							"Object_" : "DOOR_LOUNGE",
-							"Room_" : "ROOM_KITCHEN",
-							"Infos_" : [
-								"ROOM_LOUNGE"
-							]
 						}
+
 					],
 
 					"solution" : [
@@ -285,7 +240,92 @@
 		},
 
 		{
-			"name" : "PERSON_DEZZLES",
+			"name" : "PERSON_0",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Dezzles0",
+					"objecttype" : "PERSON",
+					"target": "PERSON_DEZZLES"
+				}
+			]
+		},
+
+		{
+			"name" : "PERSON_1",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Dezzles1",
+					"objecttype" : "PERSON",
+					"target": "PERSON_DEZZLES"
+				}
+			]
+		},
+
+		{
+			"name" : "PERSON_2",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Dezzles2",
+					"objecttype" : "PERSON",
+					"target": "PERSON_DEZZLES"
+				}
+			]
+		},
+		{
+			"name" : "PERSON_3",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Dezzles3",
+					"objecttype" : "PERSON",
+					"target": "PERSON_DEZZLES"
+				}
+			]
+		},
+
+
+		{
+			"name" : "PERSON_4",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Dezzles4",
+					"objecttype" : "PERSON",
+					"target": "PERSON_DEZZLES"
+				}
+			]
+		},
+
+		{
+			"name" : "PERSON_5",
 			"$Class" : "ScnEntity",
 			"type" : "ScnEntity",
 
