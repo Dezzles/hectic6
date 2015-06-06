@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Psybrus.h"
+#include "GaModalComponent.h"
 #include "System/Scene/ScnComponent.h"
 
 #include "System/Scene/Rendering/ScnMaterial.h"
@@ -42,6 +43,18 @@ struct GaGameObject
 };
 
 //////////////////////////////////////////////////////////////////////////
+// GaSolutionObject
+struct GaSolutionObject
+{
+	REFLECTION_DECLARE_BASIC( GaSolutionObject );
+	GaSolutionObject(){}
+	std::string Type_;
+	std::string Name_;
+	std::string MissingMessage_;
+	std::string Question_;
+};
+
+//////////////////////////////////////////////////////////////////////////
 // GaGameComponent
 class GaGameComponent:
 	public ScnComponent
@@ -57,9 +70,13 @@ public:
 
 	void spawnRoom( const BcName& RoomName );
 	void spawnModal( const BcName& ModalName, const BcName& Source );
+	void spawnModal( const BcName& ModalName, const std::vector< GaModalOptionGroup >& OptionGroups );
+	
 	void useObject( const BcName& ObjectName );
 
 	GaGameObject* findObject( const BcName& ObjectName );
+
+
 
 private:
 	class ScnCanvasComponent* Canvas_;
@@ -80,4 +97,5 @@ private:
 	std::list< std::string > Rooms_;
 	std::list< GaGameObject > Objects_;
 	std::set< std::string > Infos_;
+	std::vector< GaSolutionObject > Solution_;
 };

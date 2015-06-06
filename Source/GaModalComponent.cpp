@@ -88,6 +88,8 @@ void GaModalComponent::StaticRegisterClass()
 
 										Clicked = true;
 									}							
+
+									ImGui::SameLine();
 								}
 
 								if( Clicked )

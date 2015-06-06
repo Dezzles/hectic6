@@ -30,14 +30,30 @@
 
 					"rooms" : [
 						"ROOM_LOBBY",
+						"DOOR_LOUNGE",
 						"ROOM_KITCHEN"
 					],
 
 					"objects" : [
-						// Lobby
+						// Lounge
+						{
+							"Object_" : "BUTLER_GAME",
+							"Room_" : "ROOM_LOBBY",
+							"InfoText_" : "Welcome to the game. I am a butler."
+						},
+
+						{
+							"Object_" : "DOOR_LOUNGE",
+							"Room_" : "ROOM_LOBBY",
+							"Infos_" : [
+								"ROOM_LOUNGE"
+							]
+						},
+
+						// Lounge
 						{
 							"Object_" : "PERSON_DEZZLES",
-							"Room_" : "ROOM_LOBBY",
+							"Room_" : "ROOM_LOUNGE",
 							"InfoText_" : "Amy is in the kitchen.",
 							"Infos_" : [
 								"PERSON_AMY",
@@ -46,8 +62,16 @@
 						},
 
 						{
+							"Object_" : "DOOR_LOBBY",
+							"Room_" : "ROOM_LOUNGE",
+							"Infos_" : [
+								"ROOM_LOBBY"
+							]
+						},
+
+						{
 							"Object_" : "DOOR_KITCHEN",
-							"Room_" : "ROOM_LOBBY",
+							"Room_" : "ROOM_LOUNGE",
 							"Infos_" : [
 								"ROOM_KITCHEN"
 							]
@@ -57,19 +81,35 @@
 						{
 							"Object_" : "PERSON_AMY",
 							"Room_" : "ROOM_KITCHEN",
-							"InfoText_" : "Dezzles is in the lobby.",
+							"InfoText_" : "Dezzles is in the lounge.",
 							"Infos_" : [
 								"PERSON_DEZZLES",
-								"ROOM_LOBBY"
+								"ROOM_KITCHEN"
 							]
 						},
 
 						{
-							"Object_" : "DOOR_LOBBY",
+							"Object_" : "DOOR_LOUNGE",
 							"Room_" : "ROOM_KITCHEN",
 							"Infos_" : [
-								"ROOM_LOBBY"
+								"ROOM_LOUNGE"
 							]
+						}
+					],
+
+					"solution" : [
+						{
+							"type" : "PERSON",
+							"name" : "PERSON_AMY",
+							"missingmessage" : "You need to go interview people to work out who the prime suspect is.",
+							"question" : "So who do you think is responsible?"
+						},
+
+						{
+							"type" : "ROOM",
+							"name" : "ROOM_KITCHEN",
+							"missingmessage" : "You need to look in other rooms and talk to people.",
+							"question" : "And where are they?"
 						}
 					]
 				}
@@ -93,6 +133,21 @@
 		},
 
 		{
+			"name" : "ROOM_LOUNGE",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaRoomComponent",
+					"type" : "GaRoomComponent",
+
+					"roomname" : "Lounge"
+				}
+			]
+		},
+
+		{
 			"name" : "ROOM_KITCHEN",
 			"$Class" : "ScnEntity",
 			"type" : "ScnEntity",
@@ -108,6 +163,23 @@
 		},
 
 
+
+		{
+			"name" : "BUTLER_GAME",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Butler",
+					"objecttype" : "BUTLER",
+					"target": "BUTLER_GAME"
+				}
+			]
+		},
 
 		{
 			"name" : "PERSON_DEZZLES",
@@ -146,6 +218,22 @@
 		},
 
 
+		{
+			"name" : "DOOR_LOUNGE",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Lounge",
+					"objecttype" : "DOOR",
+					"target" : "ROOM_LOUNGE"
+				}
+			]
+		},
 
 		{
 			"name" : "DOOR_KITCHEN",
