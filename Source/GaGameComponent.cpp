@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Define resource internals.
 REFLECTION_DEFINE_BASIC( GaGameObject );
+REFLECTION_DEFINE_BASIC( GaSolutionObject );
 REFLECTION_DEFINE_DERIVED( GaGameComponent );
 
 void GaGameObject::StaticRegisterClass()
@@ -33,6 +34,20 @@ void GaGameObject::StaticRegisterClass()
 }
 
 
+void GaSolutionObject::StaticRegisterClass()
+{
+	ReField* Fields[] =
+	{
+		new ReField( "Type_", &GaSolutionObject::Type_ ),
+		new ReField( "Name_", &GaSolutionObject::Name_ ),
+		new ReField( "MissingMessage_", &GaSolutionObject::MissingMessage_ ),
+		new ReField( "Question_", &GaSolutionObject::Question_ ),
+	};
+
+	ReRegisterClass< GaSolutionObject >( Fields );
+}
+
+
 void GaGameComponent::StaticRegisterClass()
 {
 	ReField* Fields[] = 
@@ -45,7 +60,7 @@ void GaGameComponent::StaticRegisterClass()
 		new ReField( "Room_", &GaGameComponent::Room_, bcRFF_IMPORTER ),	
 		new ReField( "Rooms_", &GaGameComponent::Rooms_, bcRFF_IMPORTER ),	
 		new ReField( "Objects_", &GaGameComponent::Objects_, bcRFF_IMPORTER ),	
-
+		new ReField( "Solution_", &GaGameComponent::Solution_, bcRFF_IMPORTER ),	
 	};
 
 	using namespace std::placeholders;
@@ -163,10 +178,51 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 					useObject( Event.SourceName_ );
 					spawnModal( "MODAL", Event.Target_ );
 				}
+
+				// If a person event, spawn a modal.
+				if( Event.SourceType_ == "BUTLER" )
+				{
+					std::vector< GaModalOptionGroup > OptionGroups = 
+					{
+						GaModalOptionGroup( "MODAL", "Do you think you've solved it?",
+							{
+								GaModalOption( "YES", "Yes!" ),
+								GaModalOption( "CLOSE", "No" )
+							} ),
+					};
+
+					//
+#if 0
+					for( const auto& SolutionObject : Solution_ )
+					{
+						bool HaveSolutionObject = false;
+
+						auto ModalOption = GaModalOptionGroup( "MODAL", "Do you think you've solved it?",
+							{
+								GaModalOption( "YES", "Yes!" ),
+								GaModalOption( "CLOSE", "No" )
+							} );
+
+						for( const std::string& Info : Infos_ )
+						{
+							if( Info.substr( 0, SolutionObject.Type_.size() ) == SolutionObject.Type_ )
+							{
+								HaveSolutionObject = true;
+							}
+						}
+
+
+					}
+#endif
+
+					useObject( Event.SourceName_ );
+					spawnModal( "MODAL", OptionGroups );
+				}
 			}
 			else
 			{
-				if( Event.SourceType_ == "CLOSE" )
+				if( Event.SourceType_ == "CLOSE" ||
+					Event.Target_ == "CLOSE" )
 				{
 					ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
 					ModalDialogEntity_ = nullptr;
@@ -248,6 +304,29 @@ void GaGameComponent::spawnModal( const BcName& ModalName, const BcName& Target 
 	{
 		Modal->setup( FoundObject->InfoText_ );
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// spawnModal
+void GaGameComponent::spawnModal( const BcName& ModalName, const std::vector< GaModalOptionGroup >& OptionGroups )
+{
+	// Destroy old modal.
+	if( ModalDialogEntity_ )
+	{
+		ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
+	}
+
+	// Spawn modal entity.
+	ModalDialogEntity_ = ScnCore::pImpl()->spawnEntity( 
+		ScnEntitySpawnParams( 
+			ModalName, "game", ModalName,
+			MaMat4d(), getParentEntity() ) );
+	BcAssert( ModalDialogEntity_ );
+
+	// Setup modal.
+	auto Modal = ModalDialogEntity_->getComponentByType< GaModalComponent >();
+	BcAssert( Modal );
+	Modal->setup( OptionGroups );
 }
 
 //////////////////////////////////////////////////////////////////////////

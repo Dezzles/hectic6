@@ -15,6 +15,11 @@ struct GaModalOption
 {
 	REFLECTION_DECLARE_BASIC( GaModalOption );
 	GaModalOption(){}
+	GaModalOption( const std::string& Name, const std::string& Text ):
+		Name_( Name ),
+		Text_( Text )
+	{}
+
 	std::string Name_;
 	std::string Text_;
 };
@@ -23,6 +28,14 @@ struct GaModalOptionGroup
 {
 	REFLECTION_DECLARE_BASIC( GaModalOptionGroup );
 	GaModalOptionGroup(){}
+	GaModalOptionGroup( 
+			const std::string& Name, const std::string& Text, 
+			const std::vector< GaModalOption >& Options ):
+		Name_( Name ),
+		Text_( Text ),
+		Options_( Options )
+	{}
+
 	std::string Name_;
 	std::string Text_;
 	std::vector< GaModalOption > Options_;

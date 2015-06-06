@@ -197,6 +197,7 @@ void AutoGenRegisterReflection()
 	GaCameraComponent::StaticRegisterClass();
 	GaFullscreenQuadComponent::StaticRegisterClass();
 	GaGameObject::StaticRegisterClass();
+	GaSolutionObject::StaticRegisterClass();
 	GaGameComponent::StaticRegisterClass();
 	GaLevelEntity::StaticRegisterClass();
 	GaLevelComponent::StaticRegisterClass();
