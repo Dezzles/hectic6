@@ -1,7 +1,7 @@
 #include "Generator.h"
 #include "cpplinq.hpp"
 WorldGen::Generator::Generator( int People, int Hours, int Seed )
-	:Mapper_(Width, Height, Seed), Murder_( 0 )
+	:Mapper_(People, Hours, Seed), Murder_( 0 )
 {
 
 	Mapper_.NormaliseRooms();
