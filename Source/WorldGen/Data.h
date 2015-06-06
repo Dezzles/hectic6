@@ -55,9 +55,13 @@ namespace WorldGen
 			return Data.size();
 		}
 
+		std::vector<T*>& Internal()
+		{
+			return Data;
+		}
 	private:
 		std::vector< T* > Data;
-		int NextId;
+		int NextId = 0;
 	};
 
 	class Data
