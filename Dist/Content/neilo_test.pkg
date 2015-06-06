@@ -1,0 +1,292 @@
+{
+
+	"resources" : [
+		{
+			"name" : "GameEntity",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "ScnCanvasComponent",
+					"type" : "ScnCanvasComponent",
+					"noofvertices" : 10000
+				},
+
+				{
+					"$Class" : "ScnMaterialComponent",
+					"type" : "ScnMaterialComponent",
+					"name" : "spritesheet",
+					
+					"material" : "$(ScnMaterial:sprite_test_data.spritesheet_material_basic)",
+					"permutation" : "2d"
+				},
+
+				{
+					"$Class" : "GaGameComponent",
+					"type" : "GaGameComponent",
+
+					"room" : "ROOM_LOBBY",
+
+					"rooms" : [
+						"ROOM_LOBBY",
+						"DOOR_LOUNGE",
+						"ROOM_KITCHEN"
+					],
+
+					"objects" : [
+						// Lounge
+						{
+							"Object_" : "BUTLER_GAME",
+							"Room_" : "ROOM_LOBBY",
+							"InfoText_" : "Welcome to the game. I am a butler."
+						},
+
+						{
+							"Object_" : "DOOR_LOUNGE",
+							"Room_" : "ROOM_LOBBY",
+							"Infos_" : [
+								"ROOM_LOUNGE"
+							]
+						},
+
+						// Lounge
+						{
+							"Object_" : "PERSON_DEZZLES",
+							"Room_" : "ROOM_LOUNGE",
+							"InfoText_" : "Amy is in the kitchen.",
+							"Infos_" : [
+								"PERSON_AMY",
+								"ROOM_KITCHEN"
+							]
+						},
+
+						{
+							"Object_" : "DOOR_LOBBY",
+							"Room_" : "ROOM_LOUNGE",
+							"Infos_" : [
+								"ROOM_LOBBY"
+							]
+						},
+
+						{
+							"Object_" : "DOOR_KITCHEN",
+							"Room_" : "ROOM_LOUNGE",
+							"Infos_" : [
+								"ROOM_KITCHEN"
+							]
+						},
+						
+						// Kitchen.
+						{
+							"Object_" : "PERSON_AMY",
+							"Room_" : "ROOM_KITCHEN",
+							"InfoText_" : "Dezzles is in the lounge.",
+							"Infos_" : [
+								"PERSON_DEZZLES",
+								"ROOM_KITCHEN"
+							]
+						},
+
+						{
+							"Object_" : "DOOR_LOUNGE",
+							"Room_" : "ROOM_KITCHEN",
+							"Infos_" : [
+								"ROOM_LOUNGE"
+							]
+						}
+					],
+
+					"solution" : [
+						{
+							"type" : "PERSON",
+							"name" : "PERSON_AMY",
+							"missingmessage" : "You need to go interview people to work out who the prime suspect is.",
+							"question" : "So who do you think is responsible?"
+						},
+
+						{
+							"type" : "ROOM",
+							"name" : "ROOM_KITCHEN",
+							"missingmessage" : "You need to look in other rooms and talk to people.",
+							"question" : "And where are they?"
+						}
+					]
+				}
+
+			]
+		},
+
+		{
+			"name" : "ROOM_LOBBY",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaRoomComponent",
+					"type" : "GaRoomComponent",
+
+					"roomname" : "Lobby"
+				}
+			]
+		},
+
+		{
+			"name" : "ROOM_LOUNGE",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaRoomComponent",
+					"type" : "GaRoomComponent",
+
+					"roomname" : "Lounge"
+				}
+			]
+		},
+
+		{
+			"name" : "ROOM_KITCHEN",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaRoomComponent",
+					"type" : "GaRoomComponent",
+
+					"roomname" : "Kitchen"
+				}
+			]
+		},
+
+
+
+		{
+			"name" : "BUTLER_GAME",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Butler",
+					"objecttype" : "BUTLER",
+					"target": "BUTLER_GAME"
+				}
+			]
+		},
+
+		{
+			"name" : "PERSON_DEZZLES",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Dezzles",
+					"objecttype" : "PERSON",
+					"target": "PERSON_DEZZLES"
+				}
+			]
+		},
+
+
+
+		{
+			"name" : "PERSON_AMY",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Amy",
+					"objecttype" : "PERSON",
+					"target" : "PERSON_AMY"
+				}
+			]
+		},
+
+
+		{
+			"name" : "DOOR_LOUNGE",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Lounge",
+					"objecttype" : "DOOR",
+					"target" : "ROOM_LOUNGE"
+				}
+			]
+		},
+
+		{
+			"name" : "DOOR_KITCHEN",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Kitchen",
+					"objecttype" : "DOOR",
+					"target" : "ROOM_KITCHEN"
+				}
+			]
+		},
+
+		{
+			"name" : "DOOR_LOBBY",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Lobby",
+					"objecttype" : "DOOR",
+					"target" : "ROOM_LOBBY"
+				}
+			]
+		},
+
+
+		{
+			"name" : "MODAL",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaModalComponent",
+					"type" : "GaModalComponent",
+
+					"text" : "This is some information about ROOM_KITCHEN",
+
+					"unlock" : [
+						"ROOM_KITCHEN"
+					]
+				}
+			]
+		}
+	]
+}

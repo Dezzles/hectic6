@@ -98,7 +98,7 @@ private:
 	std::list< GaGameObject > Objects_;
 	std::set< std::string > Infos_;
 	std::vector< GaSolutionObject > Solution_;
-
-
+	BcU32 AttemptedSolutionObjects_;
+	BcU32 CorrectSolutionObjects_;
 	std::vector< std::string > CharacterNames_;
 };

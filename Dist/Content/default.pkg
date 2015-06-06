@@ -37,7 +37,13 @@
 						{
 							"name" : "Launch Game",
 							"entity" : "$(ScnEntity:game.GameEntity)"
+						},
+
+						{
+							"name" : "Neilo Test",
+							"entity" : "$(ScnEntity:neilo_test.GameEntity)"
 						}
+
 
 						/*
 						{ 
