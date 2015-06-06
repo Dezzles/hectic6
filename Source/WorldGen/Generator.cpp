@@ -1,5 +1,5 @@
 #include "Generator.h"
-
+#include "cpplinq.hpp"
 WorldGen::Generator::Generator( int Width, int Height, int Seed )
 	:Mapper_(Width, Height, Seed), Murder_( 0 )
 {
@@ -103,12 +103,53 @@ void WorldGen::Generator::Print()
 		printf( "%s\n", Times_.GetItem( Idx )->ToString().c_str() );
 	}
 
-	printf( "Room\tPerson\tStart\tFinish\n" );
+	printf( "Id\tRoom\tPerson\tStart\tFinish\n" );
 	for ( int Idx = 0; Idx < Information_.Size(); ++Idx )
 	{
 		Information* info = Information_.GetItem( Idx );
-		printf( "%d\t%d\t%d\t%d\n", info->RoomId_, info->PersonId_, info->StartTimeId_, info->EndTimeId_ );
+		printf( "%d\t%d\t%d\t%d\t%d\n", info->Id_, info->RoomId_, info->PersonId_, info->StartTimeId_, info->EndTimeId_ );
 	}
+	printf( "\n" );
+
+	using namespace cpplinq;
+
+	auto c = from_iterators(Information_.Internal().begin(), Information_.Internal().end())
+		>> where( [ ]( Information* const & c ) { return c->PersonId_ == 0; } )
+		>> orderby( [ ]( Information* const & c ) {return c->RoomId_; }, true )
+		>> to_vector();
+	
+	for ( int Idx = 0; Idx < c.size(); ++Idx )
+	{
+		Information* info = c[ Idx ];
+		printf( "%d\t%d\t%d\t%d\t%d\n", info->Id_, info->RoomId_, info->PersonId_, info->StartTimeId_, info->EndTimeId_ );
+	}
+
+	printf( "\n" );
+	auto c2 = from_iterators( Information_.Internal().begin(), Information_.Internal().end() )
+		>> join(
+		from_iterators( Information_.Internal().begin(), Information_.Internal().end() ),
+		[ ]( Information* const & c ) {return c->RoomId_; },
+		[ ]( Information* const & ca ) {return ca->RoomId_; },
+		[ ]( Information* const & c, Information* const & ca ) {return std::make_pair( c, ca ); } )
+		>> where([ ](std::pair<Information*, Information*> const & p) 
+			{
+				return (p.first->PersonId_ < p.second->PersonId_) &&
+					(p.first->RoomId_ == p.second->RoomId_ ) &&
+					!( ( p.first->EndTimeId_ <= p.second->StartTimeId_ ) ||
+						(p.first->StartTimeId_ >= p.second->EndTimeId_ )
+					);
+			})
+		>> to_vector();
+	for ( int Idx = 0; Idx < c2.size(); ++Idx )
+	{
+		Information* infoA = c2[ Idx ].first;
+		Information* infoB = c2[ Idx ].second;
+		printf("OVERLAP");
+		printf( "\t%d\t%d\t%d\t%d\t%d\n", infoA->Id_, infoA->RoomId_, infoA->PersonId_, infoA->StartTimeId_, infoA->EndTimeId_ );
+		printf( "\t%d\t%d\t%d\t%d\t%d\n", infoB->Id_, infoB->RoomId_, infoB->PersonId_, infoB->StartTimeId_, infoB->EndTimeId_ );
+		printf("\n");
+	}
+
 	printf( "\n" );
 
 	printf("Murderer: \t%d\nRoom: \t\t%d\nTime:\t\t%d\n", Murder_.PersonId_, Murder_.RoomId_, Murder_.TimeId_);
