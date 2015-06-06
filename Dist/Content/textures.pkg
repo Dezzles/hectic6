@@ -42,25 +42,70 @@
 		},
 
 		////////////////////////////////////////////////////////////////////////
-		// Render target + depth stencil target
+		// Game textures.
 		{
-			"type" : "ScnTexture",
-			"name" : "test_rt",
-			"rendertarget" : true,
-			"width" : 0,
-			"height" : 0,
-			"texturetype" : "tex2d",
-			"format" : "R8G8B8A8"
+			"type"			: "ScnTexture",
+			"name"			: "vignette",
+
+			"source"		: "Content/Rooms/Layer.png"
 		},
 
 		{
-			"type" : "ScnTexture",
-			"name" : "test_dst",
-			"depthstenciltarget" : true,
-			"width" : 0,
-			"height" : 0,
-			"texturetype" : "tex2d",
-			"format" : "D24"
+			"type"			: "ScnTexture",
+			"name"			: "lines",
+
+			"source"		: "Content/Rooms/LINES.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "doorL",
+			"source"		: "Content/Rooms/doorL.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "doorR",
+
+			"source"		: "Content/Rooms/doorR.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "background",
+
+			"source"		: "Content/Rooms/Background.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "floortexture",
+
+			"source"		: "Content/Rooms/floortexture.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "wallpaper2",
+
+			"source"		: "Content/Rooms/wallpaper2.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "wallpaperL2",
+
+			"source"		: "Content/Rooms/wallpaperL2.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "wallpaperR2",
+
+			"source"		: "Content/Rooms/wallparepR2.png"
 		}
+
+
+
 	]
 }

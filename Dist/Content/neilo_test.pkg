@@ -127,7 +127,18 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Lobby"
+					"roomname" : "Lobby",
+					"material" : "$(ScnMaterial:materials.background)",
+					"textures" : [
+						"$(ScnTexture:textures.background)",
+						"$(ScnTexture:textures.floortexture)",
+						"$(ScnTexture:textures.wallpaper2)",
+						"$(ScnTexture:textures.wallpaperL2)",
+						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.doorR)",
+						"$(ScnTexture:textures.lines)",
+						"$(ScnTexture:textures.vignette)"
+					]
 				}
 			]
 		},

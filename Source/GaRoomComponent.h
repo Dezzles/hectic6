@@ -28,4 +28,9 @@ private:
 
 	std::string RoomName_;
 
+	class ScnMaterial* Material_;
+	std::vector< class ScnTexture* > Textures_;
+	std::vector< class ScnMaterialComponent* > MaterialComponents_;
+
+
 };

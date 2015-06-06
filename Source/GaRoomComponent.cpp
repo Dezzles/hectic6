@@ -24,6 +24,8 @@ void GaRoomComponent::StaticRegisterClass()
 		new ReField( "Canvas_", &GaRoomComponent::Canvas_, bcRFF_TRANSIENT ),
 
 		new ReField( "RoomName_", &GaRoomComponent::RoomName_, bcRFF_IMPORTER ),
+		new ReField( "Material_", &GaRoomComponent::Material_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+		new ReField( "Textures_", &GaRoomComponent::Textures_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
 
 	};
 
@@ -43,6 +45,19 @@ void GaRoomComponent::StaticRegisterClass()
 
 							std::string Text = std::string( "You are in the " ) + Component->RoomName_;
 							ImGui::Text( Text.c_str() );
+
+							// Draw!
+							for( auto* MaterialComponent : Component->MaterialComponents_ )
+							{
+								auto Canvas = Component->Canvas_;
+
+								Canvas->setMaterialComponent( MaterialComponent );
+								Canvas->drawSprite( 
+									MaVec2d( 0.0f, 0.0f ),
+									MaVec2d( 1280.0f, 720.0f ), 
+									0, 
+									RsColour::WHITE, 0 );
+							}
 						}
 
 						ImGui::End();
@@ -54,7 +69,8 @@ void GaRoomComponent::StaticRegisterClass()
 //////////////////////////////////////////////////////////////////////////
 // Ctor
 GaRoomComponent::GaRoomComponent():
-	Canvas_( nullptr )
+	Canvas_( nullptr ),
+	Material_( nullptr )
 {
 
 }
@@ -67,7 +83,6 @@ GaRoomComponent::~GaRoomComponent()
 
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // onAttach
 //virtual
@@ -76,6 +91,16 @@ void GaRoomComponent::onAttach( ScnEntityWeakRef Parent )
 	Super::onAttach( Parent );
 
 	Canvas_ = getParentEntity()->getComponentAnyParentByType< ScnCanvasComponent >();
+
+	if( Material_ )
+	{
+		for( auto* Texture : Textures_ )
+		{
+			auto MaterialComponent = Parent->attach< ScnMaterialComponent >( "material", Material_, ScnShaderPermutationFlags::MESH_STATIC_2D );
+			MaterialComponent->setTexture( "aDiffuseTex", Texture );
+			MaterialComponents_.emplace_back( MaterialComponent );
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
