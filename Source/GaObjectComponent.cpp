@@ -51,7 +51,7 @@ void GaObjectComponent::StaticRegisterClass()
 							{
 								// Send message to parent to activate object appropriately.
 								GaActionEvent Event;
-								Event.SourceName_ = Component->ObjectName_;
+								Event.SourceName_ = Component->getParentEntity()->getName();
 								Event.SourceType_ = Component->ObjectType_;
 								Event.Target_ = Component->Target_;
 								InComponent->getParentEntity()->publish( gaEVT_FLOW_ACTION, Event, BcFalse );

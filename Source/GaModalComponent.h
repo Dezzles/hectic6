@@ -19,6 +19,8 @@ public:
 
 	GaModalComponent();
 	virtual ~GaModalComponent();
+
+	void setup( const std::string& Text, const std::vector< std::string >& Info );
 	
 	virtual void onAttach( ScnEntityWeakRef Parent );
 	virtual void onDetach( ScnEntityWeakRef Parent );

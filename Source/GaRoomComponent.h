@@ -23,7 +23,6 @@ public:
 	virtual void onAttach( ScnEntityWeakRef Parent );
 	virtual void onDetach( ScnEntityWeakRef Parent );
 
-
 private:
 	static void setCanvasProjection( const ScnComponentList& Components );
 

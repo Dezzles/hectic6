@@ -39,6 +39,8 @@ struct GaGameObject
 	std::string Room_;
 	std::string InfoText_;
 	std::vector< std::string > Infos_;
+
+	BcBool IsUnlocked_ = BcFalse;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,10 +58,10 @@ public:
 	virtual void onDetach( ScnEntityWeakRef Parent );
 
 	void spawnRoom( const BcName& RoomName );
-	void spawnModal( const BcName& ModalName );
+	void spawnModal( const BcName& ModalName, const BcName& Source );
+	void useObject( const BcName& ObjectName );
 
-private:
-	static void setCanvasProjection( const ScnComponentList& Components );
+	GaGameObject* findObject( const BcName& ObjectName );
 
 private:
 	class ScnCanvasComponent* Canvas_;
