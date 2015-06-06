@@ -29,8 +29,9 @@ private:
 	std::string RoomName_;
 
 	class ScnMaterial* Material_;
-	std::vector< class ScnTexture* > Textures_;
-	std::vector< class ScnMaterialComponent* > MaterialComponents_;
-
-
+	std::vector< class ScnTexture* > Foreground_;
+	std::vector< class ScnTexture* > Background_;
+	std::vector< class ScnMaterialComponent* > FgMaterialComponents_;
+	std::vector< class ScnMaterialComponent* > BgMaterialComponents_;
+	
 };

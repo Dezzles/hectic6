@@ -217,7 +217,7 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 			GaGameObject obj;
 			sprintf( buffer, "DOOR_%dRight", room->NormalRoomId_ );
 			obj.Object_ = buffer;
-			sprintf( buffer, "ROOM_", room->NormalRoomId_ );
+			sprintf( buffer, "ROOM_%d", room->NormalRoomId_ );
 			obj.Room_ = buffer;
 			if ( Idx == 0 )
 			{

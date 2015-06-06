@@ -25,7 +25,8 @@ void GaRoomComponent::StaticRegisterClass()
 
 		new ReField( "RoomName_", &GaRoomComponent::RoomName_, bcRFF_IMPORTER ),
 		new ReField( "Material_", &GaRoomComponent::Material_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
-		new ReField( "Textures_", &GaRoomComponent::Textures_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+		new ReField( "Foreground_", &GaRoomComponent::Foreground_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+		new ReField( "Background_", &GaRoomComponent::Background_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
 
 	};
 
@@ -47,16 +48,26 @@ void GaRoomComponent::StaticRegisterClass()
 							ImGui::Text( Text.c_str() );
 
 							// Draw!
-							for( auto* MaterialComponent : Component->MaterialComponents_ )
+							for( auto* MaterialComponent : Component->BgMaterialComponents_ )
 							{
 								auto Canvas = Component->Canvas_;
-
 								Canvas->setMaterialComponent( MaterialComponent );
 								Canvas->drawSprite( 
 									MaVec2d( 0.0f, 0.0f ),
 									MaVec2d( 1280.0f, 720.0f ), 
 									0, 
 									RsColour::WHITE, 0 );
+							}
+
+							for( auto* MaterialComponent : Component->FgMaterialComponents_ )
+							{
+								auto Canvas = Component->Canvas_;
+								Canvas->setMaterialComponent( MaterialComponent );
+								Canvas->drawSprite( 
+									MaVec2d( 0.0f, 0.0f ),
+									MaVec2d( 1280.0f, 720.0f ), 
+									0, 
+									RsColour::WHITE, 100 );
 							}
 						}
 
@@ -94,11 +105,18 @@ void GaRoomComponent::onAttach( ScnEntityWeakRef Parent )
 
 	if( Material_ )
 	{
-		for( auto* Texture : Textures_ )
+		for( auto* Texture : Foreground_ )
 		{
 			auto MaterialComponent = Parent->attach< ScnMaterialComponent >( "material", Material_, ScnShaderPermutationFlags::MESH_STATIC_2D );
 			MaterialComponent->setTexture( "aDiffuseTex", Texture );
-			MaterialComponents_.emplace_back( MaterialComponent );
+			FgMaterialComponents_.emplace_back( MaterialComponent );
+		}
+
+		for( auto* Texture : Background_ )
+		{
+			auto MaterialComponent = Parent->attach< ScnMaterialComponent >( "material", Material_, ScnShaderPermutationFlags::MESH_STATIC_2D );
+			MaterialComponent->setTexture( "aDiffuseTex", Texture );
+			BgMaterialComponents_.emplace_back( MaterialComponent );
 		}
 	}
 }

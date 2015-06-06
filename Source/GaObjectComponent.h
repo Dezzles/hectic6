@@ -23,6 +23,11 @@ public:
 	virtual void onAttach( ScnEntityWeakRef Parent );
 	virtual void onDetach( ScnEntityWeakRef Parent );
 
+	void setup( 
+		const std::string& Name, 
+		const std::string& Type, 
+		const std::string& Target,
+		class ScnTexture* Texture );
 
 private:
 	static void setCanvasProjection( const ScnComponentList& Components );
@@ -33,5 +38,10 @@ private:
 	std::string ObjectName_;
 	std::string ObjectType_;
 	std::string Target_;
+
+	class ScnMaterial* Material_;
+	class ScnTexture* Texture_;
+
+	class ScnMaterialComponent* MaterialComponent_;
 
 };

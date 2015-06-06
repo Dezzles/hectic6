@@ -28,6 +28,9 @@ void GaObjectComponent::StaticRegisterClass()
 		new ReField( "ObjectName_", &GaObjectComponent::ObjectName_, bcRFF_IMPORTER ),
 		new ReField( "ObjectType_", &GaObjectComponent::ObjectType_, bcRFF_IMPORTER ),
 		new ReField( "Target_", &GaObjectComponent::Target_, bcRFF_IMPORTER ),
+
+		new ReField( "Material_", &GaObjectComponent::Material_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+		new ReField( "Texture_", &GaObjectComponent::Texture_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
 	};
 
 	using namespace std::placeholders;
@@ -56,6 +59,18 @@ void GaObjectComponent::StaticRegisterClass()
 								Event.Target_ = Component->Target_;
 								InComponent->getParentEntity()->publish( gaEVT_FLOW_ACTION, Event, BcFalse );
 							}
+
+							// Draw!
+							if( Component->MaterialComponent_ )
+							{
+								auto Canvas = Component->Canvas_;
+								Canvas->setMaterialComponent( Component->MaterialComponent_ );
+								Canvas->drawSprite( 
+									MaVec2d( 0.0f, 0.0f ),
+									MaVec2d( 1280.0f, 720.0f ), 
+									0, 
+									RsColour::WHITE, 50 );
+							}
 						}
 
 						ImGui::End();
@@ -66,7 +81,10 @@ void GaObjectComponent::StaticRegisterClass()
 //////////////////////////////////////////////////////////////////////////
 // Ctor
 GaObjectComponent::GaObjectComponent():
-	Canvas_( nullptr )
+	Canvas_( nullptr ),
+	Material_( nullptr ),
+	Texture_( nullptr ),
+	MaterialComponent_( nullptr )
 {
 
 }
@@ -79,7 +97,6 @@ GaObjectComponent::~GaObjectComponent()
 
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // onAttach
 //virtual
@@ -88,6 +105,12 @@ void GaObjectComponent::onAttach( ScnEntityWeakRef Parent )
 	Super::onAttach( Parent );
 
 	Canvas_ = getParentEntity()->getComponentAnyParentByType< ScnCanvasComponent >();
+
+	if( Material_ && Texture_ )
+	{
+		MaterialComponent_ = Parent->attach< ScnMaterialComponent >( "material", Material_, ScnShaderPermutationFlags::MESH_STATIC_2D );
+		MaterialComponent_->setTexture( "aDiffuseTex", Texture_ );
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -97,4 +120,20 @@ void GaObjectComponent::onDetach( ScnEntityWeakRef Parent )
 {
 	Super::onDetach( Parent );
 
+}
+
+//////////////////////////////////////////////////////////////////////////
+// setup
+//virtual
+void GaObjectComponent::setup( 
+		const std::string& Name, 
+		const std::string& Type, 
+		const std::string& Target,
+		class ScnTexture* Texture )
+{
+	BcAssert( isAttached() == BcFalse );
+	ObjectName_ = Name;
+	ObjectType_ = Type;
+	Target_ = Target;
+	Texture_ = Texture;
 }

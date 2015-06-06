@@ -39,11 +39,11 @@
 						{
 							"Object_" : "BUTLER_GAME",
 							"Room_" : "ROOM_LOBBY",
-							"InfoText_" : "Welcome to the game. I am a butler."
+							"InfoText_" : "Welcome to the game. I am a BUTLER_GAME."
 						},
 
 						{
-							"Object_" : "DOOR_LOUNGE",
+							"Object_" : "DOOR_LOBBY_R",
 							"Room_" : "ROOM_LOBBY",
 							"Infos_" : [
 								"ROOM_LOUNGE"
@@ -54,7 +54,7 @@
 						{
 							"Object_" : "PERSON_DEZZLES",
 							"Room_" : "ROOM_LOUNGE",
-							"InfoText_" : "Amy is in the kitchen.",
+							"InfoText_" : "PERSON_AMY is in the ROOM_KITCHEN.",
 							"Infos_" : [
 								"PERSON_AMY",
 								"ROOM_KITCHEN"
@@ -62,7 +62,7 @@
 						},
 
 						{
-							"Object_" : "DOOR_LOBBY",
+							"Object_" : "DOOR_LOUNGE_L",
 							"Room_" : "ROOM_LOUNGE",
 							"Infos_" : [
 								"ROOM_LOBBY"
@@ -70,7 +70,7 @@
 						},
 
 						{
-							"Object_" : "DOOR_KITCHEN",
+							"Object_" : "DOOR_LOUNGE_R",
 							"Room_" : "ROOM_LOUNGE",
 							"Infos_" : [
 								"ROOM_KITCHEN"
@@ -81,7 +81,7 @@
 						{
 							"Object_" : "PERSON_AMY",
 							"Room_" : "ROOM_KITCHEN",
-							"InfoText_" : "Dezzles is in the lounge.",
+							"InfoText_" : "PERSON_DEZZLES is in the ROOM_LOUNGE.",
 							"Infos_" : [
 								"PERSON_DEZZLES",
 								"ROOM_KITCHEN"
@@ -89,7 +89,7 @@
 						},
 
 						{
-							"Object_" : "DOOR_LOUNGE",
+							"Object_" : "DOOR_KITCHEN_L",
 							"Room_" : "ROOM_KITCHEN",
 							"Infos_" : [
 								"ROOM_LOUNGE"
@@ -127,16 +127,19 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Lobby",
+					"roomname" : "ROOM_LOBBY",
+
 					"material" : "$(ScnMaterial:materials.background)",
-					"textures" : [
+					"background" : [
 						"$(ScnTexture:textures.background)",
-						"$(ScnTexture:textures.floortexture)",
+						"$(ScnTexture:textures.tiles)",
 						"$(ScnTexture:textures.wallpaper2)",
 						"$(ScnTexture:textures.wallpaperL2)",
 						"$(ScnTexture:textures.wallpaperR2)",					
-						"$(ScnTexture:textures.doorR)",
-						"$(ScnTexture:textures.lines)",
+						"$(ScnTexture:textures.lines)"
+					],
+
+					"foreground" : [
 						"$(ScnTexture:textures.vignette)"
 					]
 				}
@@ -153,7 +156,21 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Lounge"
+					"roomname" : "ROOM_LOUNGE",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"background" : [
+						"$(ScnTexture:textures.background)",
+						"$(ScnTexture:textures.floortexture)",
+						"$(ScnTexture:textures.wallpaper2)",
+						"$(ScnTexture:textures.wallpaperL2)",
+						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.lines)"
+					],
+
+					"foreground" : [
+						"$(ScnTexture:textures.vignette)"
+					]
 				}
 			]
 		},
@@ -168,7 +185,22 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Kitchen"
+					"roomname" : "ROOM_KITCHEN",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"background" : [
+						"$(ScnTexture:textures.background)",
+						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.wall1)",
+						"$(ScnTexture:textures.wallL1)",
+						"$(ScnTexture:textures.wallR1)",					
+						"$(ScnTexture:textures.lines)"
+					],
+
+					"foreground" : [
+						"$(ScnTexture:textures.vignette)"
+					]
+
 				}
 			]
 		},
@@ -185,9 +217,12 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Butler",
+					"objectname" : "BUTLER_GAME",
 					"objecttype" : "BUTLER",
-					"target": "BUTLER_GAME"
+					"target": "BUTLER_GAME",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.butler)"
 				}
 			]
 		},
@@ -202,9 +237,11 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Dezzles",
+					"objectname" : "PERSON_DEZZLES",
 					"objecttype" : "PERSON",
-					"target": "PERSON_DEZZLES"
+					"target": "PERSON_DEZZLES",
+
+					"material" : "$(ScnMaterial:materials.background)"
 				}
 			]
 		},
@@ -221,16 +258,18 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Amy",
+					"objectname" : "PERSON_AMY",
 					"objecttype" : "PERSON",
-					"target" : "PERSON_AMY"
+					"target" : "PERSON_AMY",
+
+					"material" : "$(ScnMaterial:materials.background)"
 				}
 			]
 		},
 
 
 		{
-			"name" : "DOOR_LOUNGE",
+			"name" : "DOOR_LOBBY_R",
 			"$Class" : "ScnEntity",
 			"type" : "ScnEntity",
 
@@ -239,15 +278,18 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Lounge",
+					"objectname" : "DOOR_LOBBY_R",
 					"objecttype" : "DOOR",
-					"target" : "ROOM_LOUNGE"
+					"target" : "ROOM_LOUNGE",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.doorR)"
 				}
 			]
 		},
 
 		{
-			"name" : "DOOR_KITCHEN",
+			"name" : "DOOR_LOUNGE_L",
 			"$Class" : "ScnEntity",
 			"type" : "ScnEntity",
 
@@ -256,15 +298,18 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Kitchen",
+					"objectname" : "DOOR_LOUNGE_L",
 					"objecttype" : "DOOR",
-					"target" : "ROOM_KITCHEN"
+					"target" : "ROOM_LOBBY",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.doorL)"
 				}
 			]
 		},
 
 		{
-			"name" : "DOOR_LOBBY",
+			"name" : "DOOR_LOUNGE_R",
 			"$Class" : "ScnEntity",
 			"type" : "ScnEntity",
 
@@ -273,13 +318,36 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Lobby",
+					"objectname" : "DOOR_LOUNGE_R",
 					"objecttype" : "DOOR",
-					"target" : "ROOM_LOBBY"
+					"target" : "ROOM_KITCHEN",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.doorR)"
 				}
 			]
 		},
 
+
+		{
+			"name" : "DOOR_KITCHEN_L",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "DOOR_KITCHEN_L",
+					"objecttype" : "DOOR",
+					"target" : "ROOM_LOUNGE",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.doorL)"
+				}
+			]
+		},
 
 		{
 			"name" : "MODAL",

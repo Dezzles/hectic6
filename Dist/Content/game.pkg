@@ -108,7 +108,7 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Kitchen"
+					"roomname" : "ROOM_0"
 				}
 			]
 		},
@@ -123,7 +123,7 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Lounge"
+					"roomname" : "ROOM_1"
 				}
 			]
 		},
@@ -138,7 +138,7 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Kitchen"
+					"roomname" : "ROOM_2"
 				}
 			]
 		},
@@ -153,7 +153,7 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Kitchen"
+					"roomname" : "ROOM_3"
 				}
 			]
 		},
@@ -168,7 +168,7 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Kitchen"
+					"roomname" : "ROOM_4"
 				}
 			]
 		},
@@ -183,7 +183,7 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Kitchen"
+					"roomname" : "ROOM_5"
 				}
 			]
 		},
@@ -199,7 +199,7 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Kitchen"
+					"roomname" : "ROOM_6"
 				}
 			]
 		},
@@ -215,7 +215,7 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Kitchen"
+					"roomname" : "ROOM_7"
 				}
 			]
 		},
@@ -249,9 +249,9 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Dezzles0",
+					"objectname" : "PERSON_0",
 					"objecttype" : "PERSON",
-					"target": "PERSON_DEZZLES"
+					"target": "PERSON_0"
 				}
 			]
 		},
@@ -266,9 +266,9 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Dezzles1",
+					"objectname" : "PERSON_1",
 					"objecttype" : "PERSON",
-					"target": "PERSON_DEZZLES"
+					"target": "PERSON_1"
 				}
 			]
 		},
@@ -283,9 +283,9 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Dezzles2",
+					"objectname" : "PERSON_2",
 					"objecttype" : "PERSON",
-					"target": "PERSON_DEZZLES"
+					"target": "PERSON_2"
 				}
 			]
 		},
@@ -299,9 +299,9 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Dezzles3",
+					"objectname" : "PERSON_3",
 					"objecttype" : "PERSON",
-					"target": "PERSON_DEZZLES"
+					"target": "PERSON_3"
 				}
 			]
 		},
@@ -317,9 +317,9 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Dezzles4",
+					"objectname" : "PERSON_4",
 					"objecttype" : "PERSON",
-					"target": "PERSON_DEZZLES"
+					"target": "PERSON_4"
 				}
 			]
 		},
@@ -334,28 +334,9 @@
 					"$Class" : "GaObjectComponent",
 					"type" : "GaObjectComponent",
 
-					"objectname" : "Dezzles",
+					"objectname" : "PERSON_5",
 					"objecttype" : "PERSON",
-					"target": "PERSON_DEZZLES"
-				}
-			]
-		},
-
-
-
-		{
-			"name" : "PERSON_AMY",
-			"$Class" : "ScnEntity",
-			"type" : "ScnEntity",
-
-			"components" : [
-				{
-					"$Class" : "GaObjectComponent",
-					"type" : "GaObjectComponent",
-
-					"objectname" : "Amy",
-					"objecttype" : "PERSON",
-					"target" : "PERSON_AMY"
+					"target": "PERSON_5"
 				}
 			]
 		},

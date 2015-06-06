@@ -86,6 +86,13 @@
 
 		{
 			"type"			: "ScnTexture",
+			"name"			: "tiles",
+
+			"source"		: "Content/Rooms/tiles.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
 			"name"			: "wallpaper2",
 
 			"source"		: "Content/Rooms/wallpaper2.png"
@@ -103,9 +110,38 @@
 			"name"			: "wallpaperR2",
 
 			"source"		: "Content/Rooms/wallparepR2.png"
+		},
+
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "wall1",
+
+			"source"		: "Content/Rooms/wall1.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "wallL1",
+
+			"source"		: "Content/Rooms/wallL1.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "wallR1",
+
+			"source"		: "Content/Rooms/wallR1.png"
+		},
+
+
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "butler",
+
+			"source"		: "Content/Rooms/BUTLER.png"
 		}
-
-
 
 	]
 }
