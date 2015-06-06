@@ -56,10 +56,10 @@ public:
 	virtual void onDetach( ScnEntityWeakRef Parent );
 
 	void spawnRoom( const BcName& RoomName );
-	void spawnModal( const BcName& ModalName );
+	void spawnModal( const BcName& ModalName, const BcName& Source );
+	void useObject( const BcName& ObjectName );
 
-private:
-	static void setCanvasProjection( const ScnComponentList& Components );
+	GaGameObject* findObject( const BcName& ObjectName );
 
 private:
 	class ScnCanvasComponent* Canvas_;
@@ -79,5 +79,5 @@ private:
 	std::string Room_;
 	std::list< std::string > Rooms_;
 	std::list< GaGameObject > Objects_;
-
+	std::set< std::string > Infos_;
 };

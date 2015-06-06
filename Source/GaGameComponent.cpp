@@ -1,9 +1,11 @@
 #include "GaGameComponent.h"
+#include "GaModalComponent.h"
 
 #include "System/Scene/Rendering/ScnCanvasComponent.h"
 
 #include "System/Content/CsPackage.h"
 #include "System/Content/CsCore.h"
+#include "System/Debug/DsImGui.h"
 
 #include "System/Os/OsCore.h"
 
@@ -25,7 +27,6 @@ void GaGameObject::StaticRegisterClass()
 		new ReField( "Room_", &GaGameObject::Room_ ),
 		new ReField( "InfoText_", &GaGameObject::InfoText_ ),
 		new ReField( "Infos_", &GaGameObject::Infos_ ),
-
 	};
 
 	ReRegisterClass< GaGameObject >( Fields );
@@ -54,7 +55,63 @@ void GaGameComponent::StaticRegisterClass()
 				ScnComponentProcessFuncEntry(
 					"Set canvas projection",
 					ScnComponentPriority::CANVAS_CLEAR + 1,
-					std::bind( &GaGameComponent::setCanvasProjection, _1 ) ),
+					[]( const ScnComponentList& Components )
+					{
+						for( auto Component : Components )
+						{
+							BcAssert( Component->isTypeOf< GaGameComponent >() );
+							auto* TestComponent = static_cast< GaGameComponent* >( Component.get() );
+
+							OsClient* Client = OsCore::pImpl()->getClient( 0 );
+
+							BcF32 PixelW = static_cast< BcF32 >( Client->getWidth() );
+							BcF32 PixelH = static_cast< BcF32 >( Client->getHeight() );
+
+#if 0 // 0,0 centre.
+							BcF32 EdgeL = floorf( -PixelW / 2.0f );
+							BcF32 EdgeT = floorf( -PixelH / 2.0f );
+#else // 0,0 top left.
+							BcF32 EdgeL = 0.0f;
+							BcF32 EdgeT = 0.0f;
+#endif
+
+							BcF32 EdgeR = EdgeL + PixelW;
+							BcF32 EdgeB = EdgeT + PixelH;
+
+							MaMat4d Projection;
+							Projection.orthoProjection( 
+								EdgeL, 
+								EdgeR, 
+								EdgeB, 
+								EdgeT, 
+								-1.0f, 1.0f );
+							MaMat4d InvProjection = Projection;
+							InvProjection.inverse();
+
+							TestComponent->Canvas_->clear();
+							TestComponent->Canvas_->pushMatrix( Projection );
+						}
+					} ),
+
+				ScnComponentProcessFuncEntry(
+					"Unlocked components",
+					ScnComponentPriority::DEFAULT_UPDATE + 1,
+					[]( const ScnComponentList& Components )
+					{
+						ImGui::Begin( "Game" );
+						for( auto InComponent : Components )
+						{
+							GaGameComponentRef Component( InComponent );
+
+							ImGui::Text( "Unlocked info:" );
+							for( const auto& Info : Component->Infos_ )
+							{
+								ImGui::BulletText( Info.c_str() );
+							}
+						}
+
+						ImGui::End();
+					} ),
 			} ) );
 }
 
@@ -97,13 +154,15 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 				// If a door event, spawn room.
 				if( Event.SourceType_ == "DOOR" )
 				{
+					useObject( Event.SourceName_ );
 					spawnRoom( Event.Target_ );
 				}
 
 				// If a person event, spawn a modal.
 				if( Event.SourceType_ == "PERSON" )
 				{
-					spawnModal( "MODAL" );
+					useObject( Event.SourceName_ );
+					spawnModal( "MODAL", Event.Target_ );
 				}
 			}
 			else
@@ -115,6 +174,7 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 			return evtRET_PASS;
 		} );
 
+	useObject( Room_ );
 	spawnRoom( Room_ );
 }
 
@@ -137,7 +197,7 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 	{
 		ScnCore::pImpl()->removeEntity( CurrentRoomEntity_ );
 	}
-		
+	
 	// Spawn room entity.
 	CurrentRoomEntity_ = ScnCore::pImpl()->spawnEntity( 
 		ScnEntitySpawnParams( 
@@ -147,7 +207,7 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 	Room_ = *RoomName;
 	
 	// Spawn objects for room.
-	for( auto Object : Objects_ )
+	for( const auto& Object : Objects_ )
 	{
 		// If object's location is the room.
 		if( Object.Room_ == Room_ )
@@ -163,7 +223,7 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 
 //////////////////////////////////////////////////////////////////////////
 // spawnModal
-void GaGameComponent::spawnModal( const BcName& ModalName )
+void GaGameComponent::spawnModal( const BcName& ModalName, const BcName& Target )
 {
 	// Destroy old modal.
 	if( ModalDialogEntity_ )
@@ -177,45 +237,42 @@ void GaGameComponent::spawnModal( const BcName& ModalName )
 			ModalName, "game", ModalName,
 			MaMat4d(), getParentEntity() ) );
 	BcAssert( ModalDialogEntity_ );
+
+	// Setup modal.
+	auto Modal = ModalDialogEntity_->getComponentByType< GaModalComponent >();
+	BcAssert( Modal );
+
+	if( auto* FoundObject = findObject( Target ) )
+	{
+		Modal->setup( FoundObject->InfoText_, FoundObject->Infos_ );
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-// setCanvasProjection
-//static
-void GaGameComponent::setCanvasProjection( const ScnComponentList& Components )
+// useObject
+void GaGameComponent::useObject( const BcName& ObjectName )
 {
-	for( auto Component : Components )
+	Infos_.insert( *ObjectName );
+	if( auto* FoundObject = findObject( ObjectName ) )
 	{
-		BcAssert( Component->isTypeOf< GaGameComponent >() );
-		auto* TestComponent = static_cast< GaGameComponent* >( Component.get() );
-
-		OsClient* Client = OsCore::pImpl()->getClient( 0 );
-
-		BcF32 PixelW = static_cast< BcF32 >( Client->getWidth() );
-		BcF32 PixelH = static_cast< BcF32 >( Client->getHeight() );
-
-#if 0 // 0,0 centre.
-		BcF32 EdgeL = floorf( -PixelW / 2.0f );
-		BcF32 EdgeT = floorf( -PixelH / 2.0f );
-#else // 0,0 top left.
-		BcF32 EdgeL = 0.0f;
-		BcF32 EdgeT = 0.0f;
-#endif
-
-		BcF32 EdgeR = EdgeL + PixelW;
-		BcF32 EdgeB = EdgeT + PixelH;
-
-		MaMat4d Projection;
-		Projection.orthoProjection( 
-			EdgeL, 
-			EdgeR, 
-			EdgeB, 
-			EdgeT, 
-			-1.0f, 1.0f );
-		MaMat4d InvProjection = Projection;
-		InvProjection.inverse();
-
-		TestComponent->Canvas_->clear();
-		TestComponent->Canvas_->pushMatrix( Projection );
+		for( const auto& InfoName : FoundObject->Infos_ )
+		{
+			Infos_.insert( InfoName );
+		}
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// findObject
+GaGameObject* GaGameComponent::findObject( const BcName& ObjectName )
+{
+	for( auto& Object : Objects_ )
+	{
+		if( Object.Object_ == *ObjectName )
+		{
+			return &Object;
+		}
+	}
+
+	return nullptr;
 }

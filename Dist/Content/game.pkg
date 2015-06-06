@@ -40,7 +40,6 @@
 							"Room_" : "ROOM_LOBBY",
 							"InfoText_" : "Amy is in the kitchen.",
 							"Infos_" : [
-								"PERSON_DEZZLES",
 								"PERSON_AMY",
 								"ROOM_KITCHEN"
 							]
@@ -53,14 +52,13 @@
 								"ROOM_KITCHEN"
 							]
 						},
-
+						
 						// Kitchen.
 						{
 							"Object_" : "PERSON_AMY",
 							"Room_" : "ROOM_KITCHEN",
 							"InfoText_" : "Dezzles is in the lobby.",
 							"Infos_" : [
-								"PERSON_AMY",
 								"PERSON_DEZZLES",
 								"ROOM_LOBBY"
 							]
@@ -122,7 +120,8 @@
 					"type" : "GaObjectComponent",
 
 					"objectname" : "Dezzles",
-					"objecttype" : "PERSON"
+					"objecttype" : "PERSON",
+					"target": "PERSON_DEZZLES"
 				}
 			]
 		},
@@ -140,7 +139,8 @@
 					"type" : "GaObjectComponent",
 
 					"objectname" : "Amy",
-					"objecttype" : "PERSON"
+					"objecttype" : "PERSON",
+					"target" : "PERSON_AMY"
 				}
 			]
 		},
@@ -197,6 +197,19 @@
 					"unlock" : [
 						"ROOM_KITCHEN"
 					]
+				}
+			]
+		},
+
+		{
+			"name" : "BUTLER",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaButlerComponent",
+					"type" : "GaButlerComponent"
 				}
 			]
 		}
