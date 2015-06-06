@@ -35,10 +35,10 @@ struct GaGameObject
 {
 	REFLECTION_DECLARE_BASIC( GaGameObject );
 	GaGameObject(){}
-	std::string Object_;
-	std::string Room_;
-	std::string InfoText_;
-	std::vector< std::string > Infos_;
+	std::string Object_; // Name as identifier ( {type}_{name} ) used for entity
+	std::string Room_; // Name of the room they're in ( ROOM_{number} )
+	std::string InfoText_; // Information returned by entity
+	std::vector< std::string > Infos_; // What information is revealed ( {TYPE}_{NAME} )
 };
 
 //////////////////////////////////////////////////////////////////////////
