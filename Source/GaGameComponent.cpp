@@ -259,7 +259,7 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 	// Spawn room entity.
 	CurrentRoomEntity_ = ScnCore::pImpl()->spawnEntity( 
 		ScnEntitySpawnParams( 
-			RoomName, "game", RoomName,
+			RoomName, getParentEntity()->getBasis()->getOwner()->getName(), RoomName,
 			MaMat4d(), getParentEntity() ) );
 	BcAssert( CurrentRoomEntity_ );
 	Room_ = *RoomName;
@@ -272,7 +272,7 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 		{
 			auto ObjectEntity = ScnCore::pImpl()->spawnEntity( 
 				ScnEntitySpawnParams( 
-					Object.Object_, "game", Object.Object_,
+					Object.Object_, getParentEntity()->getBasis()->getOwner()->getName(), Object.Object_,
 					MaMat4d(), CurrentRoomEntity_ ) );
 			BcAssert( ObjectEntity );
 		}
@@ -292,7 +292,7 @@ void GaGameComponent::spawnModal( const BcName& ModalName, const BcName& Target 
 	// Spawn modal entity.
 	ModalDialogEntity_ = ScnCore::pImpl()->spawnEntity( 
 		ScnEntitySpawnParams( 
-			ModalName, "game", ModalName,
+			ModalName, getParentEntity()->getBasis()->getOwner()->getName(), ModalName,
 			MaMat4d(), getParentEntity() ) );
 	BcAssert( ModalDialogEntity_ );
 
@@ -319,7 +319,7 @@ void GaGameComponent::spawnModal( const BcName& ModalName, const std::vector< Ga
 	// Spawn modal entity.
 	ModalDialogEntity_ = ScnCore::pImpl()->spawnEntity( 
 		ScnEntitySpawnParams( 
-			ModalName, "game", ModalName,
+			ModalName, getParentEntity()->getBasis()->getOwner()->getName(), ModalName,
 			MaMat4d(), getParentEntity() ) );
 	BcAssert( ModalDialogEntity_ );
 
