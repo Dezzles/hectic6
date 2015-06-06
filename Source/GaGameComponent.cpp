@@ -132,7 +132,6 @@ GaGameComponent::~GaGameComponent()
 
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // onAttach
 //virtual
@@ -167,8 +166,11 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 			}
 			else
 			{
-				ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
-				ModalDialogEntity_ = nullptr;
+				if( Event.SourceType_ == "CLOSE" )
+				{
+					ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
+					ModalDialogEntity_ = nullptr;
+				}
 			}
 
 			return evtRET_PASS;
@@ -244,7 +246,7 @@ void GaGameComponent::spawnModal( const BcName& ModalName, const BcName& Target 
 
 	if( auto* FoundObject = findObject( Target ) )
 	{
-		Modal->setup( FoundObject->InfoText_, FoundObject->Infos_ );
+		Modal->setup( FoundObject->InfoText_ );
 	}
 }
 
