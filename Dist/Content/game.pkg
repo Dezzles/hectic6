@@ -26,12 +26,23 @@
 					"$Class" : "GaGameComponent",
 					"type" : "GaGameComponent",
 
-					"room" : "ROOM_LOBBY",
-
-					"rooms" : [
-						"ROOM_LOBBY",
-						"DOOR_LOUNGE",
-						"ROOM_KITCHEN"
+					"room" : "ROOM_0",
+					
+					"characternames" : [
+						"Alice",
+						"Ben",
+						"Chris",
+						"Dana"
+					],
+					"roomnames" : [
+						"Verandah",
+						"Garage",
+						"Study",
+						"Lounge",
+						"Kitchen",
+						"PotatoRoom",
+						"Bedroom",
+						"Garden"
 					],
 
 					"objects" : [
@@ -133,7 +144,22 @@
 		},
 
 		{
-			"name" : "ROOM_LOUNGE",
+			"name" : "ROOM_0",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaRoomComponent",
+					"type" : "GaRoomComponent",
+
+					"roomname" : "Kitchen"
+				}
+			]
+		},
+
+		{
+			"name" : "ROOM_1",
 			"$Class" : "ScnEntity",
 			"type" : "ScnEntity",
 
@@ -148,7 +174,84 @@
 		},
 
 		{
-			"name" : "ROOM_KITCHEN",
+			"name" : "ROOM_2",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaRoomComponent",
+					"type" : "GaRoomComponent",
+
+					"roomname" : "Kitchen"
+				}
+			]
+		},
+
+		{
+			"name" : "ROOM_3",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaRoomComponent",
+					"type" : "GaRoomComponent",
+
+					"roomname" : "Kitchen"
+				}
+			]
+		},
+
+		{
+			"name" : "ROOM_4",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaRoomComponent",
+					"type" : "GaRoomComponent",
+
+					"roomname" : "Kitchen"
+				}
+			]
+		},
+
+		{
+			"name" : "ROOM_5",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaRoomComponent",
+					"type" : "GaRoomComponent",
+
+					"roomname" : "Kitchen"
+				}
+			]
+		},
+
+
+		{
+			"name" : "ROOM_6",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaRoomComponent",
+					"type" : "GaRoomComponent",
+
+					"roomname" : "Kitchen"
+				}
+			]
+		},
+
+
+		{
+			"name" : "ROOM_7",
 			"$Class" : "ScnEntity",
 			"type" : "ScnEntity",
 

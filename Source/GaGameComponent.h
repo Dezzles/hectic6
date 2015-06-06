@@ -98,4 +98,7 @@ private:
 	std::list< GaGameObject > Objects_;
 	std::set< std::string > Infos_;
 	std::vector< GaSolutionObject > Solution_;
+
+
+	std::vector< std::string > CharacterNames_;
 };

@@ -83,6 +83,7 @@ namespace WorldGen
 	public:
 		Room( int Id );
 		bool MurderRoom_;
+		int NormalRoomId_;
 	};
 
 	class Person
