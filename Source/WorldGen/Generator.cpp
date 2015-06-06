@@ -3,7 +3,10 @@
 WorldGen::Generator::Generator( int Width, int Height, int Seed )
 	:Mapper_(Width, Height, Seed), Murder_( 0 )
 {
+
 	Mapper_.NormaliseRooms();
+	Mapper_.Print();
+	printf( "\n" );
 	int GuiltyX = -1;
 	int GuiltyY = -1;
 	for ( int Idx1 = 0; Idx1 < Mapper_.Width_; ++Idx1 )
@@ -46,14 +49,24 @@ WorldGen::Generator::Generator( int Width, int Height, int Seed )
 
 	for ( int PersonIdx = 0; PersonIdx < Mapper_.Width_; ++PersonIdx )
 	{
+		int Start = 0;
+		int PrevRoomId = -1;
+		if ( ( PersonIdx == Murder_.PersonId_ ) && ( Murder_.TimeId_ == Start ) )
+			++Start;
 		Information* info = Information_.Create();
 		info->PersonId_ = PersonIdx;
 		info->StartTimeId_ = 0;
 		info->EndTimeId_ = 0;
-		info->RoomId_ = Mapper_.Data[ PersonIdx ][ 0 ];
-		for ( int TimeIdx = 0; TimeIdx < Mapper_.Height_; ++TimeIdx )
+		info->RoomId_ = Mapper_.Data[ PersonIdx ][ Start ];
+		PrevRoomId = info->RoomId_;
+		for ( int TimeIdx = Start; TimeIdx < Mapper_.Height_; ++TimeIdx )
 		{
-			if ( info->RoomId_ != Mapper_.Data[ PersonIdx ][ TimeIdx ] )
+			if ( ( PersonIdx == Murder_.PersonId_ ) && ( Murder_.TimeId_ == TimeIdx ) )
+			{
+				PrevRoomId = -1;
+				continue;
+			}
+			if ( PrevRoomId != Mapper_.Data[ PersonIdx ][ TimeIdx ] )
 			{
 				info = Information_.Create();
 				info->PersonId_ = PersonIdx;
@@ -61,6 +74,7 @@ WorldGen::Generator::Generator( int Width, int Height, int Seed )
 				info->EndTimeId_ = TimeIdx;
 				info->RoomId_ = Mapper_.Data[ PersonIdx ][ TimeIdx ];
 			}
+			PrevRoomId = Mapper_.Data[ PersonIdx ][ TimeIdx ];
 			++info->EndTimeId_;
 		}
 	}
