@@ -3,7 +3,10 @@
 WorldGen::Generator::Generator( int Width, int Height, int Seed )
 	:Mapper_(Width, Height, Seed), Murder_( 0 )
 {
+
 	Mapper_.NormaliseRooms();
+	Mapper_.Print();
+	printf( "\n" );
 	int GuiltyX = -1;
 	int GuiltyY = -1;
 	for ( int Idx1 = 0; Idx1 < Mapper_.Width_; ++Idx1 )
