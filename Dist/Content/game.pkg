@@ -199,19 +199,6 @@
 					]
 				}
 			]
-		},
-
-		{
-			"name" : "BUTLER",
-			"$Class" : "ScnEntity",
-			"type" : "ScnEntity",
-
-			"components" : [
-				{
-					"$Class" : "GaButlerComponent",
-					"type" : "GaButlerComponent"
-				}
-			]
 		}
 	]
 }

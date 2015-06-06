@@ -74,7 +74,6 @@
 #include "System/SysKernel.h"
 #include "System/SysSystem.h"
 #include "GaAnimationControllerComponent.h"
-#include "GaButlerComponent.h"
 #include "GaCameraComponent.h"
 #include "GaFullscreenQuadComponent.h"
 #include "GaGameComponent.h"
@@ -195,7 +194,6 @@ void AutoGenRegisterReflection()
 	SysKernel::StaticRegisterClass();
 	SysSystem::StaticRegisterClass();
 	GaAnimationControllerComponent::StaticRegisterClass();
-	GaButlerComponent::StaticRegisterClass();
 	GaCameraComponent::StaticRegisterClass();
 	GaFullscreenQuadComponent::StaticRegisterClass();
 	GaGameObject::StaticRegisterClass();
