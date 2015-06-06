@@ -7,7 +7,7 @@ namespace WorldGen
 	class Generator
 	{
 	public:
-		Generator( int Width, int Height, int Seed );
+		Generator( int People, int Hours, int Seed );
 		void GenerateClues();
 		void Print();
 
