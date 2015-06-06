@@ -33,14 +33,47 @@
 						"ROOM_KITCHEN"
 					],
 
-					"objects" : {
+					"objects" : [
 						// Lobby
-						"PERSON_DEZZLES" : "ROOM_LOBBY",
-						"DOOR_KITCHEN" : "ROOM_LOBBY",
+						{
+							"Object_" : "PERSON_DEZZLES",
+							"Room_" : "ROOM_LOBBY",
+							"InfoText_" : "Amy is in the kitchen.",
+							"Infos_" : [
+								"PERSON_DEZZLES",
+								"PERSON_AMY",
+								"ROOM_KITCHEN"
+							]
+						},
+
+						{
+							"Object_" : "DOOR_KITCHEN",
+							"Room_" : "ROOM_LOBBY",
+							"Infos_" : [
+								"ROOM_KITCHEN"
+							]
+						},
 
 						// Kitchen.
-						"DOOR_LOBBY" : "ROOM_KITCHEN"
-					}
+						{
+							"Object_" : "PERSON_AMY",
+							"Room_" : "ROOM_KITCHEN",
+							"InfoText_" : "Dezzles is in the lobby.",
+							"Infos_" : [
+								"PERSON_AMY",
+								"PERSON_DEZZLES",
+								"ROOM_LOBBY"
+							]
+						},
+
+						{
+							"Object_" : "DOOR_LOBBY",
+							"Room_" : "ROOM_KITCHEN",
+							"Infos_" : [
+								"ROOM_LOBBY"
+							]
+						}
+					]
 				}
 
 			]
@@ -94,6 +127,26 @@
 			]
 		},
 
+
+
+		{
+			"name" : "PERSON_AMY",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaObjectComponent",
+					"type" : "GaObjectComponent",
+
+					"objectname" : "Amy",
+					"objecttype" : "PERSON"
+				}
+			]
+		},
+
+
+
 		{
 			"name" : "DOOR_KITCHEN",
 			"$Class" : "ScnEntity",
@@ -126,7 +179,26 @@
 					"target" : "ROOM_LOBBY"
 				}
 			]
-		}
+		},
 
+
+		{
+			"name" : "MODAL",
+			"$Class" : "ScnEntity",
+			"type" : "ScnEntity",
+
+			"components" : [
+				{
+					"$Class" : "GaModalComponent",
+					"type" : "GaModalComponent",
+
+					"text" : "This is some information about ROOM_KITCHEN",
+
+					"unlock" : [
+						"ROOM_KITCHEN"
+					]
+				}
+			]
+		}
 	]
 }
