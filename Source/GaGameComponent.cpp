@@ -13,7 +13,7 @@
 
 #include "Base/BcMath.h"
 #include "Base/BcProfiler.h"
-
+#include "WorldGen/Generator.h"
 //////////////////////////////////////////////////////////////////////////
 // Define resource internals.
 REFLECTION_DEFINE_BASIC( GaGameObject );
@@ -57,7 +57,9 @@ void GaGameComponent::StaticRegisterClass()
 		new ReField( "CurrentRoomEntity_", &GaGameComponent::CurrentRoomEntity_, bcRFF_TRANSIENT ),	
 		new ReField( "ModalDialogEntity_", &GaGameComponent::ModalDialogEntity_, bcRFF_TRANSIENT ),	
 		
-		new ReField( "Room_", &GaGameComponent::Room_, bcRFF_IMPORTER ),	
+		new ReField( "CharacterNames_", &GaGameComponent::CharacterNames_, bcRFF_IMPORTER ),
+
+		new ReField( "Room_", &GaGameComponent::Room_, bcRFF_IMPORTER ),
 		new ReField( "Rooms_", &GaGameComponent::Rooms_, bcRFF_IMPORTER ),	
 		new ReField( "Objects_", &GaGameComponent::Objects_, bcRFF_IMPORTER ),	
 		new ReField( "Solution_", &GaGameComponent::Solution_, bcRFF_IMPORTER ),
@@ -159,6 +161,42 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 	Super::onAttach( Parent );
 
 	Canvas_ = getParentEntity()->getComponentAnyParentByType< ScnCanvasComponent >();
+	WorldGen::Generator gen( 4, 4, 0x845efad7 );
+	char buffer[ 2048 ];
+	char buffer2[ 64 ];
+	for ( int Idx = 0; Idx < gen.People_.Size(); ++Idx )
+	{
+		WorldGen::Person* person = gen.People_.GetItem( Idx );
+		GaGameObject obj;
+		sprintf(buffer, "PERSON_%d", person->Id_);
+		obj.Object_ = buffer;
+		sprintf(buffer, "ROOM_%d", Idx);
+		obj.Room_ = buffer;
+
+		int start = 0;
+		for ( int Idx2 = 0; Idx2 < person->Information_.size(); ++Idx2 )
+		{
+			int timeLength = person->Information_[ Idx2 ]->EndTimeId_ - person->Information_[ Idx2 ]->StartTimeId_;
+			start += sprintf( &buffer[start], "I was with PERSON_%d in the ROOM_%d at %d:00 for %d hour%s.\n", 
+				person->Information_[ Idx2 ]->PersonId_ ,
+				gen.Rooms_.GetItemById(person->Information_[ Idx2 ]->RoomId_ )->NormalRoomId_, 
+				person->Information_[ Idx2 ]->StartTimeId_ + 11,
+				timeLength, timeLength > 1 ? "s" : "");
+			sprintf( buffer2, "PERSON_%d", person->Information_[ Idx2 ]->PersonId_ );
+			obj.Infos_.push_back( buffer2 );
+			sprintf( buffer2, "ROOM_%d", gen.Rooms_.GetItemById( person->Information_[ Idx2 ]->RoomId_ )->NormalRoomId_ );
+			obj.Infos_.push_back( buffer2 );
+		}
+		obj.InfoText_ = buffer;
+		Objects_.push_back(obj);
+	}
+
+	for ( int Idx = 0; Idx < gen.Rooms_.Size(); ++Idx )
+	{
+		WorldGen::Room* room = gen.Rooms_.GetItem( Idx );
+		GaGameObject obj;
+		sprintf(buffer, "DOOR_%dLeft", room->NormalRoomId_);
+	}
 
 	// Subscribe to events
 	getParentEntity()->subscribe( gaEVT_FLOW_ACTION, this,

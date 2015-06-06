@@ -100,5 +100,5 @@ private:
 	std::vector< GaSolutionObject > Solution_;
 	BcU32 AttemptedSolutionObjects_;
 	BcU32 CorrectSolutionObjects_;
-
+	std::vector< std::string > CharacterNames_;
 };

@@ -188,8 +188,8 @@ void WorldGen::Mapper::NormaliseRooms()
 					ReplaceRoom( Data[ Idx1 ][ Idx2 ], NewId );
 			}
 		}
-
 	}
+
 }
 
 void WorldGen::Mapper::ReplaceRoom( int RoomId, int NewId )
