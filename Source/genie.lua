@@ -10,7 +10,9 @@ PsyProjectGameExe( solution().name )
       "../Psybrus/External/jsoncpp/include", 
       "../Psybrus/External/imgui", 
    }
-
+   excludes {
+      "WorldGen/main.cpp"
+   }
    PsyAddEngineLinks {
       "Engine",
       "System_Sound",
