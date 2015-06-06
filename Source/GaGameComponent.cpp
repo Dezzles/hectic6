@@ -244,7 +244,7 @@ void GaGameComponent::spawnModal( const BcName& ModalName, const BcName& Target 
 
 	if( auto* FoundObject = findObject( Target ) )
 	{
-		Modal->setup( FoundObject->InfoText_, FoundObject->Infos_ );
+		Modal->setup( FoundObject->InfoText_ );
 	}
 }
 

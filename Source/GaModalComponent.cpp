@@ -17,16 +17,43 @@
 
 //////////////////////////////////////////////////////////////////////////
 // Define resource internals.
+REFLECTION_DEFINE_BASIC( GaModalOption );
+REFLECTION_DEFINE_BASIC( GaModalOptionGroup );
 REFLECTION_DEFINE_DERIVED( GaModalComponent );
+
+void GaModalOption::StaticRegisterClass()
+{
+	ReField* Fields[] =
+	{
+		new ReField( "Name_", &GaModalOption::Name_ ),
+		new ReField( "Text_", &GaModalOption::Text_ ),
+	};
+
+	ReRegisterClass< GaModalOption >( Fields );
+}
+
+
+void GaModalOptionGroup::StaticRegisterClass()
+{
+	ReField* Fields[] =
+	{
+		new ReField( "Name_", &GaModalOptionGroup::Name_ ),
+		new ReField( "Text_", &GaModalOptionGroup::Text_ ),
+		new ReField( "Options_", &GaModalOptionGroup::Options_ ),
+	};
+
+	ReRegisterClass< GaModalOptionGroup >( Fields );
+}
+
 
 void GaModalComponent::StaticRegisterClass()
 {
 	ReField* Fields[] = 
 	{
 		new ReField( "Canvas_", &GaModalComponent::Canvas_, bcRFF_TRANSIENT ),
+		new ReField( "CurrentOptionGroup_", &GaModalComponent::CurrentOptionGroup_, bcRFF_TRANSIENT ),
 
-		new ReField( "Text_", &GaModalComponent::Text_, bcRFF_IMPORTER ),
-		new ReField( "Info_", &GaModalComponent::Info_, bcRFF_IMPORTER ),
+		new ReField( "OptionGroups_", &GaModalComponent::OptionGroups_, bcRFF_IMPORTER ),
 	};
 
 	using namespace std::placeholders;
@@ -43,7 +70,10 @@ void GaModalComponent::StaticRegisterClass()
 							ImGui::Begin( "Modals" );
 							GaModalComponentRef Component( InComponent );
 
-							ImGui::Text( Component->Text_.c_str() );
+							const auto& OptionGroup = Component->OptionGroups_[ Component->CurrentOptionGroup_ ];
+							ImGui::Text( OptionGroup.Text_.c_str() );
+
+							//for( const u)
 
 							//std::string ButtonTest = Component->ObjectType_ + ": " + Component->ObjectName_;
 
@@ -63,7 +93,8 @@ void GaModalComponent::StaticRegisterClass()
 //////////////////////////////////////////////////////////////////////////
 // Ctor
 GaModalComponent::GaModalComponent():
-	Canvas_( nullptr )
+	Canvas_( nullptr ),
+	CurrentOptionGroup_( 0 )
 {
 
 }
@@ -78,10 +109,25 @@ GaModalComponent::~GaModalComponent()
 
 //////////////////////////////////////////////////////////////////////////
 // setup
-void GaModalComponent::setup( const std::string& Text, const std::vector< std::string >& Info )
+void GaModalComponent::setup( const std::string& Text )
 {
-	Text_ = Text;
-	Info_ = Info;
+	GaModalOption Option;
+	Option.Name_ = "CLOSE";
+	Option.Text_ = "Ok, thanks!";
+
+	GaModalOptionGroup OptionGroup;
+	OptionGroup.Name_ = "MODAL";
+	OptionGroup.Text_ = Text;
+	OptionGroup.Options_.push_back( Option );
+
+	OptionGroups_.push_back( OptionGroup );
+}
+
+//////////////////////////////////////////////////////////////////////////
+// setup
+void GaModalComponent::setup( const std::vector< GaModalOptionGroup >& OptionGroups )
+{
+
 }
 
 //////////////////////////////////////////////////////////////////////////

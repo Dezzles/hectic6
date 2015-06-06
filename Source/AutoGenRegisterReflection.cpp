@@ -203,6 +203,8 @@ void AutoGenRegisterReflection()
 	GaLevelEntity::StaticRegisterClass();
 	GaLevelComponent::StaticRegisterClass();
 	GaMindwaveVisualiserComponent::StaticRegisterClass();
+	GaModalOption::StaticRegisterClass();
+	GaModalOptionGroup::StaticRegisterClass();
 	GaModalComponent::StaticRegisterClass();
 	GaMovingComponent::StaticRegisterClass();
 	GaNetworkTestComponent::StaticRegisterClass();
