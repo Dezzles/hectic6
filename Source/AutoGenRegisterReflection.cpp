@@ -79,6 +79,7 @@
 #include "GaGameComponent.h"
 #include "GaLevelComponent.h"
 #include "GaMindwaveVisualiserComponent.h"
+#include "GaModalComponent.h"
 #include "GaMovingComponent.h"
 #include "GaNetworkTestComponent.h"
 #include "GaObjectComponent.h"
@@ -195,10 +196,12 @@ void AutoGenRegisterReflection()
 	GaAnimationControllerComponent::StaticRegisterClass();
 	GaCameraComponent::StaticRegisterClass();
 	GaFullscreenQuadComponent::StaticRegisterClass();
+	GaGameObject::StaticRegisterClass();
 	GaGameComponent::StaticRegisterClass();
 	GaLevelEntity::StaticRegisterClass();
 	GaLevelComponent::StaticRegisterClass();
 	GaMindwaveVisualiserComponent::StaticRegisterClass();
+	GaModalComponent::StaticRegisterClass();
 	GaMovingComponent::StaticRegisterClass();
 	GaNetworkTestComponent::StaticRegisterClass();
 	GaObjectComponent::StaticRegisterClass();

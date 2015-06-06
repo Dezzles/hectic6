@@ -30,6 +30,18 @@ struct GaActionEvent : EvtEvent< GaActionEvent >
 typedef ReObjectRef< class GaGameComponent > GaGameComponentRef;
 
 //////////////////////////////////////////////////////////////////////////
+// GaGameObject
+struct GaGameObject
+{
+	REFLECTION_DECLARE_BASIC( GaGameObject );
+	GaGameObject(){}
+	std::string Object_;
+	std::string Room_;
+	std::string InfoText_;
+	std::vector< std::string > Infos_;
+};
+
+//////////////////////////////////////////////////////////////////////////
 // GaGameComponent
 class GaGameComponent:
 	public ScnComponent
@@ -44,6 +56,7 @@ public:
 	virtual void onDetach( ScnEntityWeakRef Parent );
 
 	void spawnRoom( const BcName& RoomName );
+	void spawnModal( const BcName& ModalName );
 
 private:
 	static void setCanvasProjection( const ScnComponentList& Components );
@@ -60,10 +73,11 @@ private:
 
 	GameState GameState_;
 	ScnEntityRef CurrentRoomEntity_;
+	ScnEntityRef ModalDialogEntity_;
 	
 	// TODO: Use BcNames...
 	std::string Room_;
 	std::list< std::string > Rooms_;
-	std::map< std::string, std::string > Objects_;
+	std::list< GaGameObject > Objects_;
 
 };

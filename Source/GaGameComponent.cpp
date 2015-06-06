@@ -14,7 +14,23 @@
 
 //////////////////////////////////////////////////////////////////////////
 // Define resource internals.
+REFLECTION_DEFINE_BASIC( GaGameObject );
 REFLECTION_DEFINE_DERIVED( GaGameComponent );
+
+void GaGameObject::StaticRegisterClass()
+{
+	ReField* Fields[] =
+	{
+		new ReField( "Object_", &GaGameObject::Object_ ),
+		new ReField( "Room_", &GaGameObject::Room_ ),
+		new ReField( "InfoText_", &GaGameObject::InfoText_ ),
+		new ReField( "Infos_", &GaGameObject::Infos_ ),
+
+	};
+
+	ReRegisterClass< GaGameObject >( Fields );
+}
+
 
 void GaGameComponent::StaticRegisterClass()
 {
@@ -23,7 +39,8 @@ void GaGameComponent::StaticRegisterClass()
 		new ReField( "Canvas_", &GaGameComponent::Canvas_, bcRFF_TRANSIENT ),
 		new ReField( "GameState_", &GaGameComponent::GameState_, bcRFF_TRANSIENT ),	
 		new ReField( "CurrentRoomEntity_", &GaGameComponent::CurrentRoomEntity_, bcRFF_TRANSIENT ),	
-
+		new ReField( "ModalDialogEntity_", &GaGameComponent::ModalDialogEntity_, bcRFF_TRANSIENT ),	
+		
 		new ReField( "Room_", &GaGameComponent::Room_, bcRFF_IMPORTER ),	
 		new ReField( "Rooms_", &GaGameComponent::Rooms_, bcRFF_IMPORTER ),	
 		new ReField( "Objects_", &GaGameComponent::Objects_, bcRFF_IMPORTER ),	
@@ -73,11 +90,26 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 		[ this ]( EvtID ID, const EvtBaseEvent& InEvent )
 		{
 			const auto& Event = InEvent.get< GaActionEvent >();
-
-			// If a door event, spawn room.
-			if( Event.SourceType_ == "DOOR" )
+			
+			// No modal dialog, then don't handle events.
+			if( ModalDialogEntity_ == nullptr )
 			{
-				spawnRoom( Event.Target_ );
+				// If a door event, spawn room.
+				if( Event.SourceType_ == "DOOR" )
+				{
+					spawnRoom( Event.Target_ );
+				}
+
+				// If a person event, spawn a modal.
+				if( Event.SourceType_ == "PERSON" )
+				{
+					spawnModal( "MODAL" );
+				}
+			}
+			else
+			{
+				ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
+				ModalDialogEntity_ = nullptr;
 			}
 
 			return evtRET_PASS;
@@ -118,16 +150,33 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 	for( auto Object : Objects_ )
 	{
 		// If object's location is the room.
-		if( Object.second == Room_ )
+		if( Object.Room_ == Room_ )
 		{
-			auto ObjectName = Object.first;
 			auto ObjectEntity = ScnCore::pImpl()->spawnEntity( 
 				ScnEntitySpawnParams( 
-					ObjectName, "game", ObjectName,
+					Object.Object_, "game", Object.Object_,
 					MaMat4d(), CurrentRoomEntity_ ) );
 			BcAssert( ObjectEntity );
 		}
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// spawnModal
+void GaGameComponent::spawnModal( const BcName& ModalName )
+{
+	// Destroy old modal.
+	if( ModalDialogEntity_ )
+	{
+		ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
+	}
+
+	// Spawn modal entity.
+	ModalDialogEntity_ = ScnCore::pImpl()->spawnEntity( 
+		ScnEntitySpawnParams( 
+			ModalName, "game", ModalName,
+			MaMat4d(), getParentEntity() ) );
+	BcAssert( ModalDialogEntity_ );
 }
 
 //////////////////////////////////////////////////////////////////////////
