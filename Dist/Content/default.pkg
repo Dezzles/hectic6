@@ -34,6 +34,12 @@
 					"testmaxtime"			: 0.001,
 
 					"options"				: [
+						{
+							"name" : "Launch Game",
+							"entity" : "$(ScnEntity:game.GameEntity)"
+						}
+
+						/*
 						{ 
 							"name" : "Animation test",
 							"entity" : "$(ScnEntity:animation_test.TestEntity)"
@@ -83,6 +89,7 @@
 							"name" : "Sprite test",
 							"entity" : "$(ScnEntity:sprite_test.TestEntity)"
 						}
+						*/
 					]
 				}
 			]
@@ -107,30 +114,14 @@
 					"y"						: 0.0,
 					"width"					: 1.0,
 					"height"				: 1.0,
-					"near"					: 10.0,
-					"far"					: 500.0,
-					"horizontalfov"			: 0.75,
-					"verticalfov"			: 0.0,
-					"rendermask"			: 2,
-					"clearcolour"			: "1.0, 0.0, 1.0, 1.0",
-					"enablecleardepth"		: true,
-					"rendertarget"			: "$(ScnTexture:textures.test_rt)",
-					"depthstenciltarget"	: "$(ScnTexture:textures.test_dst)"					
-				},
-
-				{
-					"type"					: "ScnViewComponent",
-					"x"						: 0.0,
-					"y"						: 0.0,
-					"width"					: 1.0,
-					"height"				: 1.0,
 					"near"					: 1.0,
 					"far"					: 4000.0,
 					"horizontalfov"			: 0.75,
 					"verticalfov"			: 0.0,
 					"rendermask"			: 1
-				},
+				}
 
+				/*
 				{
 					"type"					: "ScnPostProcessComponent",
 					"input" 				: "$(ScnTexture:pp_textures.pp_framebuffer)",
@@ -266,16 +257,9 @@
 					],
 
 					"output" 				: "$(ScnTexture:pp_textures.pp_framebuffer)"
-				},
-				
-				{
-					"type"					: "ScnLightComponent",
-					"name"					: "Sunlight",
-
-					"min"					: 16.0,
-					"mid"					: 2048.0,
-					"max"					: 1000000.0
 				}
+
+				*/
 			]
 		}
 	]

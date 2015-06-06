@@ -30,7 +30,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 // GPsySetupParams
-PsySetupParams GPsySetupParams( "Development Game", psySF_GAME_DEV, 1.0f / 60.0f );	
+PsySetupParams GPsySetupParams( "Hectic 6: The Private Dick", psySF_GAME_DEV, 1.0f / 60.0f );	
 
 //////////////////////////////////////////////////////////////////////////
 // PsyGameInit
