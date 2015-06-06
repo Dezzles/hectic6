@@ -70,19 +70,36 @@ void GaModalComponent::StaticRegisterClass()
 							ImGui::Begin( "Modals" );
 							GaModalComponentRef Component( InComponent );
 
-							const auto& OptionGroup = Component->OptionGroups_[ Component->CurrentOptionGroup_ ];
-							ImGui::Text( OptionGroup.Text_.c_str() );
-
-							//for( const u)
-
-							//std::string ButtonTest = Component->ObjectType_ + ": " + Component->ObjectName_;
-
-							if( ImGui::Button( "Close" ) )
+							if( Component->CurrentOptionGroup_ < Component->OptionGroups_.size() )
 							{
-								// Send message to parent to activate object appropriately.
-								GaActionEvent Event;
-								Event.Target_ = "CLOSE";
-								InComponent->getParentEntity()->publish( gaEVT_FLOW_ACTION, Event, BcFalse );
+								const auto& OptionGroup = Component->OptionGroups_[ Component->CurrentOptionGroup_ ];
+								ImGui::Text( OptionGroup.Text_.c_str() );
+
+								bool Clicked = false;
+								for( const auto& Option : OptionGroup.Options_ )
+								{
+									if( ImGui::Button( Option.Text_.c_str() ) )
+									{
+										GaActionEvent Event;
+										Event.SourceType_ = "SELECTION";
+										Event.SourceName_ = Option.Name_;
+										Event.Target_ = Option.Name_;
+										InComponent->getParentEntity()->publish( gaEVT_FLOW_ACTION, Event, BcFalse );
+
+										Clicked = true;
+									}							
+								}
+
+								if( Clicked )
+								{
+									Component->CurrentOptionGroup_++;
+									if( Component->CurrentOptionGroup_ >= Component->OptionGroups_.size() )
+									{
+										GaActionEvent Event;
+										Event.SourceType_ = "CLOSE";
+										InComponent->getParentEntity()->publish( gaEVT_FLOW_ACTION, Event, BcFalse );
+									}
+								}
 							}
 							ImGui::End();
 						}
@@ -111,23 +128,62 @@ GaModalComponent::~GaModalComponent()
 // setup
 void GaModalComponent::setup( const std::string& Text )
 {
-	GaModalOption Option;
-	Option.Name_ = "CLOSE";
-	Option.Text_ = "Ok, thanks!";
+#define TEST_GROUPS ( 0 )
+#if TEST_GROUPS
+	{
+		GaModalOptionGroup OptionGroup;
+		OptionGroup.Name_ = "MODAL";
+		OptionGroup.Text_ = Text;
 
-	GaModalOptionGroup OptionGroup;
-	OptionGroup.Name_ = "MODAL";
-	OptionGroup.Text_ = Text;
-	OptionGroup.Options_.push_back( Option );
+		{
+			GaModalOption Option;
+			Option.Name_ = "SOMETHING";
+			Option.Text_ = "Tell me more!";
+			OptionGroup.Options_.push_back( Option );
+		}
 
-	OptionGroups_.push_back( OptionGroup );
+		OptionGroups_.push_back( OptionGroup );
+	}
+#endif
+
+	{
+		GaModalOptionGroup OptionGroup;
+		OptionGroup.Name_ = "MODAL";
+		OptionGroup.Text_ = Text;
+
+		{
+			GaModalOption Option;
+			Option.Name_ = "CLOSE";
+			Option.Text_ = "Ok, thanks!";
+			OptionGroup.Options_.push_back( Option );
+		}
+#if TEST_GROUPS
+		{
+			GaModalOption Option;
+			Option.Name_ = "CLOSE";
+			Option.Text_ = "I might chat to you later.";
+			OptionGroup.Options_.push_back( Option );
+		}
+
+		{
+			GaModalOption Option;
+			Option.Name_ = "CLOSE";
+			Option.Text_ = "You've been a great help.";
+			OptionGroup.Options_.push_back( Option );
+		}
+#endif
+
+		OptionGroups_.push_back( OptionGroup );
+	}
+
+#undef TEST_GROUPS
 }
 
 //////////////////////////////////////////////////////////////////////////
 // setup
 void GaModalComponent::setup( const std::vector< GaModalOptionGroup >& OptionGroups )
 {
-
+	OptionGroups_ = OptionGroups;
 }
 
 //////////////////////////////////////////////////////////////////////////

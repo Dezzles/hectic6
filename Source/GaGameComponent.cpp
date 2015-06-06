@@ -167,8 +167,11 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 			}
 			else
 			{
-				ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
-				ModalDialogEntity_ = nullptr;
+				if( Event.SourceType_ == "CLOSE" )
+				{
+					ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
+					ModalDialogEntity_ = nullptr;
+				}
 			}
 
 			return evtRET_PASS;
