@@ -131,4 +131,6 @@ private:
 	BcU32 AttemptedSolutionObjects_;
 	BcU32 CorrectSolutionObjects_;
 	std::vector< std::string > CharacterNames_;
+
+	std::map< std::string, std::string > IDTextMapping_;
 };

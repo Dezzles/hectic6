@@ -46,6 +46,9 @@ public:
 	MaVec2d Position_;
 	MaVec2d Size_;
 
+	MaVec2d HotspotStart_;
+	MaVec2d HotspotSize_;
+
 	class ScnMaterialComponent* MaterialComponent_;
 
 };

@@ -34,7 +34,12 @@ void GaObjectComponent::StaticRegisterClass()
 
 		new ReField( "Position_", &GaObjectComponent::Position_, bcRFF_IMPORTER ),
 		new ReField( "Size_", &GaObjectComponent::Size_, bcRFF_IMPORTER ),
+
+		new ReField( "HotspotStart_", &GaObjectComponent::HotspotStart_, bcRFF_IMPORTER ),
+		new ReField( "HotspotSize_", &GaObjectComponent::HotspotSize_, bcRFF_IMPORTER ),
 	};
+
+//#define DEBUG_UI
 
 	using namespace std::placeholders;
 	ReRegisterClass< GaObjectComponent, Super >( Fields )
@@ -45,12 +50,14 @@ void GaObjectComponent::StaticRegisterClass()
 					ScnComponentPriority::DEFAULT_UPDATE,
 					[]( const ScnComponentList& Components )
 					{
+#ifdef DEBUG_UI
 						ImGui::Begin( "Objects" );
-
+#endif
 						for( auto InComponent : Components )
 						{
 							GaObjectComponentRef Component( InComponent );
 
+#ifdef DEBUG_UI
 							std::string ButtonTest = Component->ObjectType_ + ": " + Component->ObjectName_;
 
 							if( ImGui::Button( ButtonTest.c_str() ) )
@@ -62,6 +69,7 @@ void GaObjectComponent::StaticRegisterClass()
 								Event.Target_ = Component->Target_;
 								InComponent->getParentEntity()->publish( gaEVT_FLOW_ACTION, Event, BcFalse );
 							}
+#endif
 
 							// Draw!
 							if( Component->MaterialComponent_ )
@@ -75,8 +83,9 @@ void GaObjectComponent::StaticRegisterClass()
 									RsColour::WHITE, 50 );
 							}
 						}
-
+#ifdef DEBUG_UI
 						ImGui::End();
+#endif
 					} ),
 			} ) );
 }
@@ -89,7 +98,9 @@ GaObjectComponent::GaObjectComponent():
 	Texture_( nullptr ),
 	MaterialComponent_( nullptr ),
 	Position_( 0.0f, 0.0f ),
-	Size_( 1280.0f, 720.0f )
+	Size_( 1280.0f, 720.0f ),
+	HotspotStart_( 0.0f, 0.0f ),
+	HotspotSize_( 0.0f, 0.0f )
 {
 
 }
@@ -111,6 +122,33 @@ void GaObjectComponent::onAttach( ScnEntityWeakRef Parent )
 
 	Canvas_ = getParentEntity()->getComponentAnyParentByType< ScnCanvasComponent >();
 
+	if( HotspotSize_ == MaVec2d( 0.0f, 0.0f ) )
+	{
+		HotspotStart_ = Position_;
+		HotspotSize_ = Size_;
+	}
+
+	OsCore::pImpl()->subscribe( osEVT_INPUT_MOUSEDOWN, this, 
+		[ this ]( EvtID, const EvtBaseEvent& InEvent ) -> eEvtReturn
+		{
+			const auto& Event = InEvent.get< OsEventInputMouse >();
+			auto HotspotEnd = HotspotStart_ + HotspotSize_;
+			if( Event.MouseX_ > HotspotStart_.x() && Event.MouseX_ < HotspotEnd.x() &&
+				Event.MouseY_ > HotspotStart_.y() && Event.MouseY_ < HotspotEnd.y() )
+			{
+				// Send message to parent to activate object appropriately.
+				GaActionEvent Event;
+				Event.SourceName_ = getParentEntity()->getName();
+				Event.SourceType_ = ObjectType_;
+				Event.Target_ = Target_;
+				getParentEntity()->publish( gaEVT_FLOW_ACTION, Event, BcFalse );
+
+				return evtRET_BLOCK;
+			}
+
+			return evtRET_PASS;
+		} );
+
 	if( Material_ && Texture_ )
 	{
 		MaterialComponent_ = Parent->attach< ScnMaterialComponent >( "material", Material_, ScnShaderPermutationFlags::MESH_STATIC_2D );
@@ -125,6 +163,7 @@ void GaObjectComponent::onDetach( ScnEntityWeakRef Parent )
 {
 	Super::onDetach( Parent );
 
+	OsCore::pImpl()->unsubscribeAll( this );
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -145,4 +184,5 @@ void GaObjectComponent::setup(
 	{
 		Texture_ = Texture;
 	}
+	Position_ = Position;
 }

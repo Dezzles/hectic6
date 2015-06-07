@@ -1,6 +1,7 @@
 #include "GaGameComponent.h"
 #include "GaModalComponent.h"
 #include "GaObjectComponent.h"
+#include "GaRoomComponent.h"
 
 #include "System/Scene/Rendering/ScnCanvasComponent.h"
 
@@ -77,6 +78,7 @@ void GaCharacterObject::StaticRegisterClass()
 	ReRegisterClass< GaCharacterObject >( Fields );
 }
 
+//#define DEBUG_UI
 
 void GaGameComponent::StaticRegisterClass()
 {
@@ -97,6 +99,7 @@ void GaGameComponent::StaticRegisterClass()
 		new ReField( "Solution_", &GaGameComponent::Solution_, bcRFF_IMPORTER ),
 		new ReField( "AttemptedSolutionObjects_", &GaGameComponent::AttemptedSolutionObjects_, bcRFF_TRANSIENT ),
 		new ReField( "CorrectSolutionObjects_", &GaGameComponent::CorrectSolutionObjects_, bcRFF_TRANSIENT ),
+		new ReField( "IDTextMapping_", &GaGameComponent::IDTextMapping_, bcRFF_TRANSIENT ),
 	};
 
 	using namespace std::placeholders;
@@ -143,7 +146,7 @@ void GaGameComponent::StaticRegisterClass()
 							TestComponent->Canvas_->pushMatrix( Projection );
 						}
 					} ),
-
+#ifdef DEBUG_UI
 				ScnComponentProcessFuncEntry(
 					"Unlocked components",
 					ScnComponentPriority::DEFAULT_UPDATE + 1,
@@ -163,6 +166,7 @@ void GaGameComponent::StaticRegisterClass()
 
 						ImGui::End();
 					} ),
+#endif
 			} ) );
 }
 
@@ -195,8 +199,10 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 	Canvas_ = getParentEntity()->getComponentAnyParentByType< ScnCanvasComponent >();
 	//0x845efad7 4,4 - Solvable puzzle.
 	//0x12345678 4,4 - Solvable puzzle.
-	//0x11111111 3,3 - 
-	auto Seed = 0x11111111;
+	//0x11111111 3,3 - Solvable puzzle.
+	auto Seed = 0x845efad7;
+	int totalHours = 4;
+	int totalPeople = 4;
 	
 	// Randomise our room list.
 	srand( Seed );
@@ -212,13 +218,49 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 		auto TargetIdx = rand() % Characters_.size();
 		std::swap( Characters_[ Idx ], Characters_[ TargetIdx ] );
 
-
+		auto NameIdx = rand() % Characters_[ Idx ].ValidNames_.size();
+		Characters_[ Idx ].Text_ = Characters_[ Idx ].ValidNames_[ NameIdx ];
 	}
 
+	// Randomly select name.
+	for( int Idx = 0; Idx < Characters_.size(); ++Idx )
+	{
+		auto NameIdx = rand() % Characters_[ Idx ].ValidNames_.size();
+		Characters_[ Idx ].Text_ = Characters_[ Idx ].ValidNames_[ NameIdx ];
+
+		IDTextMapping_[ *BcName( "PERSON", Idx ) ] = Characters_[ Idx ].Text_;
+	}
+
+	BcAssert( Rooms_.size() > 0 );
+	BcAssert( Characters_.size() > 0 );
+
+	int startTimeOffset = 11;
+	
 	// Gen the world.
-	WorldGen::Generator gen( 3, 3, 0x11111111 );
+	WorldGen::Generator gen( totalPeople, totalHours, Seed );
 	char buffer[ 2048 ];
 	char buffer2[ 64 ];
+
+	for( int hourOffset = 0; hourOffset < totalHours; ++hourOffset )
+	{
+		int hour = startTimeOffset + hourOffset;
+				
+		sprintf( buffer, "TIME_%d", hour );
+		Infos_.insert( buffer );
+
+		sprintf( buffer2, "%d:00", hour );
+		IDTextMapping_[ buffer ] = buffer2;
+	}
+
+	// solution.
+	sprintf( buffer, "PERSON_%d", gen.Murder_.PersonId_ );
+	Infos_.insert( buffer );
+	Solution_[ 0 ].Name_ = buffer;
+	
+	sprintf( buffer, "TIME_%d", startTimeOffset + gen.Murder_.TimeId_ );
+	Infos_.insert( buffer );
+	Solution_[ 1 ].Name_ = buffer;
+
 	std::set< int > RoomIds;
 	for ( int Idx = 0; Idx < gen.People_.Size(); ++Idx )
 	{
@@ -237,16 +279,31 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 		{
 			int timeLength = person->Information_[ Idx2 ]->EndTimeId_ - person->Information_[ Idx2 ]->StartTimeId_;
 			int InfoRoomId = gen.Rooms_.GetItemById(person->Information_[ Idx2 ]->RoomId_ )->NormalRoomId_;
-			start += sprintf( &buffer[start], "I was with PERSON_%d in the ROOM_%d at %d:00 for %d hour%s.\n", 
-				person->Information_[ Idx2 ]->TargetId_ , // TargetId.
-				InfoRoomId, 
-				person->Information_[ Idx2 ]->StartTimeId_ + 11,
+			int targetId = person->Information_[ Idx2 ]->TargetId_;
+			std::string targetName = Characters_[ targetId ].Text_;
+			std::string roomName = Rooms_[ InfoRoomId ].Text_;
+
+			start += sprintf( &buffer[start], "I was with %s in the %s at %d:00 for %d hour%s.\n", 
+				targetName.c_str(),
+				roomName.c_str(), 
+				person->Information_[ Idx2 ]->StartTimeId_ + startTimeOffset,
 				timeLength, timeLength > 1 ? "s" : "");
-			sprintf( buffer2, "PERSON_%d", person->Information_[ Idx2 ]->TargetId_ );
+
+			sprintf( buffer2, "PERSON_%d", targetId );
 			obj.Infos_.push_back( buffer2 );
-			sprintf( buffer2, "ROOM_%d", gen.Rooms_.GetItemById( person->Information_[ Idx2 ]->RoomId_ )->NormalRoomId_ );
 			
+			sprintf( buffer2, "ROOM_%d", gen.Rooms_.GetItemById( person->Information_[ Idx2 ]->RoomId_ )->NormalRoomId_ );
 			obj.Infos_.push_back( buffer2 );
+
+			// Add time infos.
+			for( int hourOffset = 0; hourOffset < timeLength; ++hourOffset )
+			{
+				int hour = person->Information_[ Idx2 ]->StartTimeId_ + startTimeOffset + hourOffset;
+				
+				sprintf( buffer2, "TIME_%d", hour );
+				obj.Infos_.push_back( buffer2 );
+			}
+			
 		}
 		obj.InfoText_ = buffer;
 		Objects_.push_back(obj);
@@ -346,7 +403,7 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 								HaveSolutionObject = true;
 
 								ModalOption.Options_.emplace_back( 
-									GaModalOption( Info, Info ) );
+									GaModalOption( Info, IDTextMapping_[ Info ] ) );
 							}
 						}
 						
@@ -444,15 +501,76 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 	{
 		ScnCore::pImpl()->removeEntity( CurrentRoomEntity_ );
 	}
-	
-	// Spawn room entity.
-	CurrentRoomEntity_ = ScnCore::pImpl()->spawnEntity( 
-		ScnEntitySpawnParams( 
-			RoomName, getParentEntity()->getBasis()->getOwner()->getName(), RoomName,
-			MaMat4d(), getParentEntity() ) );
-	BcAssert( CurrentRoomEntity_ );
+
+	// Get room idx.
 	Room_ = *RoomName;
-	
+	auto RoomID = RoomName.getID();
+
+	// Spawn room entity.
+	if( RoomID == BcErrorCode )
+	{
+		// lobby.
+		CurrentRoomEntity_ = ScnCore::pImpl()->spawnEntity( 
+			ScnEntitySpawnParams( 
+				RoomName, getParentEntity()->getBasis()->getOwner()->getName(), RoomName,
+				MaMat4d(), getParentEntity() ) );
+	}
+	else
+	{
+		const auto Room = Rooms_[ RoomID ];
+		CurrentRoomEntity_ = ScnCore::pImpl()->spawnEntity( 
+			ScnEntitySpawnParams( 
+				RoomName, Room.Entity_,
+				MaMat4d(), getParentEntity() ) );
+
+		CurrentRoomEntity_->getComponentByType< GaRoomComponent >()->RoomName_ = Rooms_[ RoomID ].Text_;
+	}
+	BcAssert( CurrentRoomEntity_ );
+
+	// Count people in room.
+	std::string Person = "PERSON_";
+	std::string Butler = "BUTLER_";
+	BcU32 NoofPeopleInRoom = 0;
+	BcU32 CurrPeopleInRoom = 0;
+	for( const auto& Object : Objects_ )
+	{
+		// If object's location is the room.
+		if( Object.Room_ == Room_ )
+		{
+			if( Object.Object_.substr( 0, Person.size() ) == Person ||
+				Object.Object_.substr( 0, Butler.size() ) == Butler  )
+			{
+				NoofPeopleInRoom++;
+			}
+		}
+	}
+
+	MaVec2d PersonStart( 0.0f, 0.0f );
+	MaVec2d PersonWidth( 270.0f, 0.0f );
+
+	if( NoofPeopleInRoom == 1 )
+	{
+		PersonStart = MaVec2d( 0.0f, 200.0f );
+		PersonWidth = MaVec2d( 270.0f, 0.0f );
+	}
+	else if( NoofPeopleInRoom == 2 )
+	{
+		PersonStart = MaVec2d( 0.0f, 200.0f );
+		PersonWidth = MaVec2d( 270.0f, 0.0f );
+	}
+	else if( NoofPeopleInRoom == 3 )
+	{
+		PersonStart = MaVec2d( 0.0f, 200.0f );
+		PersonWidth = MaVec2d( 270.0f, 0.0f );
+	}
+	else if( NoofPeopleInRoom == 4 )
+	{
+		PersonStart = MaVec2d( 0.0f, 200.0f );
+		PersonWidth = MaVec2d( 270.0f, 0.0f );
+	}
+
+	PersonStart += ( PersonWidth * ( 4 - NoofPeopleInRoom ) ) / 2.0f - MaVec2d( 150.0f, 0.0f );
+
 	// Spawn objects for room.
 	for( const auto& Object : Objects_ )
 	{
@@ -465,12 +583,32 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 					MaMat4d(), CurrentRoomEntity_ ) );
 			BcAssert( ObjectEntity );
 
+			MaVec2d Position( 0.0f, 0.0f );
+			if( Object.Object_.substr( 0, Person.size() ) == Person ||
+				Object.Object_.substr( 0, Butler.size() ) == Butler  )
+			{
+				PersonStart += PersonWidth;
+				Position = PersonStart;
+			}
+
 			// Override target.
 			if( !Object.Target_.empty() )
 			{
 				auto ObjectComponent = ObjectEntity->getComponentByType< GaObjectComponent >();
-				ObjectComponent->setup( Object.Object_, ObjectComponent->ObjectType_, Object.Target_, nullptr, 
-					MaVec2d( 0.0f, 0.0f ) );
+				ObjectComponent->setup( 
+					Object.Object_, 
+					ObjectComponent->ObjectType_, 
+					Object.Target_, 
+					nullptr, Position );
+			}
+			else
+			{
+				auto ObjectComponent = ObjectEntity->getComponentByType< GaObjectComponent >();
+				ObjectComponent->setup( 
+					ObjectComponent->ObjectName_, 
+					ObjectComponent->ObjectType_, 
+					ObjectComponent->Target_,
+					nullptr, Position );
 			}
 		}
 	}

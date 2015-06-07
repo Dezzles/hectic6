@@ -122,14 +122,15 @@
 					],
 
 
-					"rooms" : [
+					"characters" : [
 						{
 							"entity" : "$(ScnEntity:this.PERSON_0)",
 							"text" : "PERSON_0",
 							"validnames": [
 								"Zorp",
 								"Xenu",
-								"Mork"
+								"Mork",
+								"Colonel Dijon"
 							]
 						},
 
@@ -137,7 +138,10 @@
 							"entity" : "$(ScnEntity:this.PERSON_1)",
 							"text" : "PERSON_1",
 							"validnames": [
-								"Lady Fur"
+								"Lady Fur",
+								"Miss Red",
+								"Bridgette",
+								"Sir Tahl-hat"
 							]
 						},
 
@@ -147,7 +151,8 @@
 							"validnames": [
 								"Dana",
 								"Alice",
-								"Jen"
+								"Jen",
+								"Casey"
 							]
 						},
 
@@ -156,7 +161,8 @@
 							"text" : "PERSON_3",
 							"validnames": [
 								"Fairy Buttercup",
-								"Mrs Bouquet"
+								"Mrs Bouquet",
+								"Mrs Cream"
 							]
 						},
 					
@@ -164,7 +170,8 @@
 							"entity" : "$(ScnEntity:this.PERSON_4)",
 							"text" : "PERSON_4",
 							"validnames": [
-								"Theodore"
+								"Theodore",
+								"Professor Eggplant"
 							]
 						}
 					],
@@ -191,16 +198,16 @@
 					"solution" : [
 						{
 							"type" : "PERSON",
-							"name" : "PERSON_AMY",
+							"name" : "PERSON_",
 							"missingmessage" : "You need to go interview people to work out who the prime suspect is.",
 							"question" : "So who do you think is responsible?"
 						},
 
 						{
-							"type" : "ROOM",
-							"name" : "ROOM_KITCHEN",
+							"type" : "TIME",
+							"name" : "TIME_",
 							"missingmessage" : "You need to look in other rooms and talk to people.",
-							"question" : "And where are they?"
+							"question" : "When do you think they done it?"
 						}
 					]
 				}
@@ -218,7 +225,21 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "Lobby"
+					"roomname" : "Lobby",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"background" : [
+						"$(ScnTexture:textures.background)",
+						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.wallpaper2)",
+						"$(ScnTexture:textures.wallpaperL2)",
+						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.lines)"
+					],
+
+					"foreground" : [
+						"$(ScnTexture:textures.vignette)"
+					]
 				}
 			]
 		},
@@ -599,23 +620,6 @@
 
 
 		{
-			"name" : "DOOR_LOUNGE",
-			"$Class" : "ScnEntity",
-			"type" : "ScnEntity",
-
-			"components" : [
-				{
-					"$Class" : "GaObjectComponent",
-					"type" : "GaObjectComponent",
-
-					"objectname" : "Lounge",
-					"objecttype" : "DOOR",
-					"target" : "ROOM_LOUNGE"
-				}
-			]
-		},
-
-		{
 			"name" : "DOOR_LEFT",
 			"$Class" : "ScnEntity",
 			"type" : "ScnEntity",
@@ -629,7 +633,10 @@
 					"objecttype" : "DOOR",
 
 					"material" : "$(ScnMaterial:materials.background)",
-					"texture" : "$(ScnTexture:textures.doorL)"
+					"texture" : "$(ScnTexture:textures.doorL)",
+
+					"hotspotstart" : "0.0, 0.0",
+					"hotspotsize" : "260.0, 720.0"
 				}
 			]
 		},
@@ -648,7 +655,10 @@
 					"objecttype" : "DOOR",
 
 					"material" : "$(ScnMaterial:materials.background)",
-					"texture" : "$(ScnTexture:textures.doorR)"
+					"texture" : "$(ScnTexture:textures.doorR)",
+				
+					"hotspotstart" : "1020.0, 0.0",
+					"hotspotsize" : "260.0, 720.0"
 				}
 			]
 		},
