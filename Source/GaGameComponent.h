@@ -133,4 +133,9 @@ private:
 	std::vector< std::string > CharacterNames_;
 
 	std::map< std::string, std::string > IDTextMapping_;
+
+	class ScnMaterialComponent* FontMaterial_;
+	class ScnFont* Font_;
+	class ScnFontComponent* FontComponent_;
+
 };

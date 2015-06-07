@@ -249,6 +249,13 @@
 			"name"			: "bubble",
 
 			"source"		: "Content/UI/bubble.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "button",
+
+			"source"		: "Content/UI/button.png"
 		}
 
 	]

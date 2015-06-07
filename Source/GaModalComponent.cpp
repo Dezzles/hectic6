@@ -59,6 +59,7 @@ void GaModalComponent::StaticRegisterClass()
 		new ReField( "Material_", &GaModalComponent::Material_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
 		new ReField( "FontMaterial_", &GaModalComponent::FontMaterial_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
 		new ReField( "Texture_", &GaModalComponent::Texture_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+		new ReField( "TextureButton_", &GaModalComponent::TextureButton_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
 		new ReField( "Font_", &GaModalComponent::Font_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
 
 		new ReField( "MaterialComponent_", &GaModalComponent::MaterialComponent_, bcRFF_TRANSIENT ),
@@ -130,7 +131,7 @@ void GaModalComponent::StaticRegisterClass()
 										.setLayer( 101 )
 										.setTextColour( RsColour::BLACK )
 										.setSize( 24.0f );
-									
+
 									Pos -= Size * 0.5f;
 
 									Component->FontComponent_->drawText( 
@@ -139,8 +140,38 @@ void GaModalComponent::StaticRegisterClass()
 										Pos,
 										Size,
 										OptionGroup.Text_ );
+
+									if( Component->CurrentOptionGroup_ < Component->OptionGroups_.size() )
+									{
+										const auto& OptionGroup = Component->OptionGroups_[ Component->CurrentOptionGroup_ ];
+
+										MaVec2d Position( 640.0f, 500.0f );
+										MaVec2d Size( Component->TextureButton_->getWidth(), Component->TextureButton_->getHeight() );
+										MaVec2d TotalSize( Size.x() * OptionGroup.Options_.size(), Size.y() );
+
+										Position -= MaVec2d( TotalSize.x() * 0.5f, 0.0f );
+
+										for( BcU32 ButtonIdx = 0; ButtonIdx < OptionGroup.Options_.size(); ++ButtonIdx )
+										{
+											const auto& ButtonOption = OptionGroup.Options_[ ButtonIdx ];
+											auto NewPosition = Position;
+
+											Canvas->setMaterialComponent( Component->ButtonMaterialComponent_ );
+											Canvas->drawSprite( NewPosition, Size, 0, RsColour::WHITE, 100 );
+										
+											Component->FontComponent_->drawText( 
+												Canvas, 
+												Params,
+												NewPosition,
+												Size,
+												ButtonOption.Text_ );
+									
+											Position += MaVec2d( 300.0f, 0.0f );
+										}
+									}
 								}
 							}
+							Component->HadClick_ = BcFalse;
 							ImGui::End();
 						}
 					} ),
@@ -155,9 +186,13 @@ GaModalComponent::GaModalComponent():
 	Material_( nullptr ),
 	FontMaterial_( nullptr ),
 	Texture_( nullptr ),
+	TextureButton_( nullptr ),
 	Font_( nullptr ),
 	MaterialComponent_( nullptr ),
-	FontComponent_( nullptr )
+	ButtonMaterialComponent_( nullptr ),
+	FontComponent_( nullptr ),
+	ClickPosition_( 0.0f, 0.0f ),
+	HadClick_( BcFalse )
 {
 
 }
@@ -244,8 +279,63 @@ void GaModalComponent::onAttach( ScnEntityWeakRef Parent )
 	MaterialComponent_ = Parent->attach< ScnMaterialComponent >( "material", Material_, ScnShaderPermutationFlags::MESH_STATIC_2D );
 	MaterialComponent_->setTexture( "aDiffuseTex", Texture_ );
 
+	ButtonMaterialComponent_ = Parent->attach< ScnMaterialComponent >( "material", Material_, ScnShaderPermutationFlags::MESH_STATIC_2D );
+	ButtonMaterialComponent_->setTexture( "aDiffuseTex", TextureButton_ );
+	
 	FontComponent_ = Parent->attach< ScnFontComponent >( "material", Font_, FontMaterial_ );
 
+	OsCore::pImpl()->subscribe( osEVT_INPUT_MOUSEDOWN, this, 
+		[ this ]( EvtID, const EvtBaseEvent& InEvent ) -> eEvtReturn
+		{
+			const auto& Event = InEvent.get< OsEventInputMouse >();
+			ClickPosition_ = MaVec2d( Event.MouseX_, Event.MouseY_ );
+
+			if( CurrentOptionGroup_ < OptionGroups_.size() )
+			{
+				const auto& OptionGroup = OptionGroups_[ CurrentOptionGroup_ ];
+
+				MaVec2d Position( 640.0f, 500.0f );
+				MaVec2d Size( TextureButton_->getWidth(), TextureButton_->getHeight() );
+				MaVec2d TotalSize( Size.x() * OptionGroup.Options_.size(), Size.y() );
+
+				Position -= MaVec2d( TotalSize.x() * 0.5f, 0.0f );
+				bool Clicked = false;
+				for( BcU32 ButtonIdx = 0; ButtonIdx < OptionGroup.Options_.size(); ++ButtonIdx )
+				{
+					const auto& ButtonOption = OptionGroup.Options_[ ButtonIdx ];
+					auto NewPosition = Position;
+
+					auto HotspotEnd = NewPosition + Size;
+					if( Event.MouseX_ > NewPosition.x() && Event.MouseX_ < HotspotEnd.x() &&
+						Event.MouseY_ > NewPosition.y() && Event.MouseY_ < HotspotEnd.y() )
+					{
+						GaActionEvent Event;
+						Event.SourceType_ = "SELECTION";
+						Event.SourceName_ = ButtonOption.Name_;
+						Event.Target_ = ButtonOption.Name_;
+						getParentEntity()->publish( gaEVT_FLOW_ACTION, Event, BcFalse );
+
+						Clicked = true;
+					}
+							
+					if( Clicked )
+					{
+						CurrentOptionGroup_++;
+						if( CurrentOptionGroup_ >= OptionGroups_.size() )
+						{
+							GaActionEvent Event;
+							Event.SourceType_ = "CLOSE";
+							getParentEntity()->publish( gaEVT_FLOW_ACTION, Event, BcFalse );
+						}
+						return evtRET_BLOCK;
+					}
+									
+					Position += MaVec2d( 300.0f, 0.0f );
+				}
+			}
+
+			return evtRET_PASS;
+		}, true );
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -255,4 +345,5 @@ void GaModalComponent::onDetach( ScnEntityWeakRef Parent )
 {
 	Super::onDetach( Parent );
 
+	OsCore::pImpl()->unsubscribeAll( this );
 }

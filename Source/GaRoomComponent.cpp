@@ -52,13 +52,9 @@ void GaRoomComponent::StaticRegisterClass()
 					ScnComponentPriority::DEFAULT_UPDATE,
 					[]( const ScnComponentList& Components )
 					{
-						ImGui::Begin( "Room" );
 						for( auto InComponent : Components )
 						{
 							GaRoomComponentRef Component( InComponent );
-
-							std::string Text = std::string( "You are in the " ) + Component->RoomName_;
-							ImGui::Text( Text.c_str() );
 
 							// Draw!
 							for( auto* MaterialComponent : Component->BgMaterialComponents_ )
@@ -97,8 +93,6 @@ void GaRoomComponent::StaticRegisterClass()
 									RsColour::WHITE, 4 );
 							}
 						}
-
-						ImGui::End();
 					} ),
 			} ) );
 

@@ -26,6 +26,9 @@
 					"$Class" : "GaGameComponent",
 					"type" : "GaGameComponent",
 
+					"fontmaterial" : "$(ScnMaterial:fonts.font_material)",
+					"font" : "$(ScnFont:fonts.courier)",
+
 					"room" : "ROOM_0",
 					
 					"characternames" : [
@@ -141,7 +144,7 @@
 								"Lady Fur",
 								"Miss Red",
 								"Bridgette",
-								"Sir Tahl-hat"
+								"Sir Tahlhat"
 							]
 						},
 
@@ -171,7 +174,7 @@
 							"text" : "PERSON_4",
 							"validnames": [
 								"Theodore",
-								"Professor Eggplant"
+								"Prof. Eggplant"
 							]
 						}
 					],
@@ -812,6 +815,7 @@
 					"material" : "$(ScnMaterial:materials.background)",
 					"fontmaterial" : "$(ScnMaterial:fonts.font_material)",
 					"texture" : "$(ScnTexture:textures.bubble)",
+					"texturebutton" : "$(ScnTexture:textures.button)",
 					"font" : "$(ScnFont:fonts.courier)"
 				}
 			]

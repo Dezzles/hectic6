@@ -4,6 +4,7 @@
 #include "GaRoomComponent.h"
 
 #include "System/Scene/Rendering/ScnCanvasComponent.h"
+#include "System/Scene/Rendering/ScnFont.h"
 
 #include "System/Content/CsPackage.h"
 #include "System/Content/CsCore.h"
@@ -16,6 +17,8 @@
 #include "Base/BcMath.h"
 #include "Base/BcProfiler.h"
 #include "WorldGen/Generator.h"
+
+
 //////////////////////////////////////////////////////////////////////////
 // Define resource internals.
 REFLECTION_DEFINE_BASIC( GaGameObject );
@@ -78,7 +81,7 @@ void GaCharacterObject::StaticRegisterClass()
 	ReRegisterClass< GaCharacterObject >( Fields );
 }
 
-//#define DEBUG_UI
+#define DEBUG_UI
 
 void GaGameComponent::StaticRegisterClass()
 {
@@ -100,6 +103,9 @@ void GaGameComponent::StaticRegisterClass()
 		new ReField( "AttemptedSolutionObjects_", &GaGameComponent::AttemptedSolutionObjects_, bcRFF_TRANSIENT ),
 		new ReField( "CorrectSolutionObjects_", &GaGameComponent::CorrectSolutionObjects_, bcRFF_TRANSIENT ),
 		new ReField( "IDTextMapping_", &GaGameComponent::IDTextMapping_, bcRFF_TRANSIENT ),
+		
+		new ReField( "FontMaterial_", &GaGameComponent::FontMaterial_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+		new ReField( "Font_", &GaGameComponent::Font_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
 	};
 
 	using namespace std::placeholders;
@@ -144,29 +150,51 @@ void GaGameComponent::StaticRegisterClass()
 
 							TestComponent->Canvas_->clear();
 							TestComponent->Canvas_->pushMatrix( Projection );
-						}
-					} ),
-#ifdef DEBUG_UI
-				ScnComponentProcessFuncEntry(
-					"Unlocked components",
-					ScnComponentPriority::DEFAULT_UPDATE + 1,
-					[]( const ScnComponentList& Components )
-					{
-						ImGui::Begin( "Game" );
-						for( auto InComponent : Components )
-						{
-							GaGameComponentRef Component( InComponent );
+														
+							ScnFontDrawParams Params = ScnFontDrawParams()
+								.setAlignment( ScnFontAlignment::HCENTRE | ScnFontAlignment::VCENTRE )
+								.setLayer( 80 )
+								.setTextColour( RsColour::BLACK )
+								.setSize( 40.0f );
 
-							ImGui::Text( "Unlocked info:" );
-							for( const auto& Info : Component->Infos_ )
+							BcName RoomName = TestComponent->Room_;
+
+							// HACK.
+							if( RoomName == "ROOM_LOBBY" )
 							{
-								ImGui::BulletText( Info.c_str() );
+								TestComponent->FontComponent_->drawText( 
+									TestComponent->Canvas_, 
+									Params,
+									MaVec2d( 0.0f, 0.0f ),
+									MaVec2d( 1280.0f, 100.0f ),
+									"Lobby" );
 							}
-						}
+							else
+							{							
+								TestComponent->FontComponent_->drawText( 
+									TestComponent->Canvas_, 
+									Params,
+									MaVec2d( 0.0f, 0.0f ),
+									MaVec2d( 1280.0f, 100.0f ),
+									TestComponent->Rooms_[ RoomName.getID() ].Text_ );
+							}
 
-						ImGui::End();
+							ImGui::Begin( "Game" );
+							for( auto InComponent : Components )
+							{
+								GaGameComponentRef Component( InComponent );
+
+								ImGui::Text( "Unlocked info:" );
+								for( const auto& Info : Component->Infos_ )
+								{
+									auto Obj = Component->findObject( Info.c_str() );
+									ImGui::BulletText( "%s: (%s)", Info.c_str(), Obj ? Obj->InfoText_.c_str() : "" );
+								}
+							}
+
+							ImGui::End();
+						}
 					} ),
-#endif
 			} ) );
 }
 
@@ -176,7 +204,10 @@ GaGameComponent::GaGameComponent():
 	Canvas_( nullptr ),
 	GameState_( GameState::IDLE ),
 	AttemptedSolutionObjects_( 0 ),
-	CorrectSolutionObjects_( 0 )
+	CorrectSolutionObjects_( 0 ),
+	FontMaterial_( nullptr ),
+	Font_( nullptr ),
+	FontComponent_( nullptr )
 {
 
 }
@@ -219,8 +250,6 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 		std::swap( Rooms_[ Idx ], Rooms_[ TargetIdx ] );
 	}
 #endif
-
-	std::swap( Rooms_[ 0 ], Rooms_[ 7 ] );
 
 	// Randomise our character list.
 	for( int Idx = 0; Idx < Characters_.size(); ++Idx )
@@ -280,11 +309,16 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 		int RoomId = Idx % gen.Rooms_.Size();
 		sprintf(buffer, "PERSON_%d", person->Id_);
 		obj.Object_ = buffer;
+		obj.Infos_.push_back( buffer );
 		sprintf(buffer, "ROOM_%d", RoomId);
 		obj.Room_ = buffer;
 		RoomIds.insert( RoomId );
 
 		int start = 0;
+
+		start += sprintf( &buffer[start], "%s says:\n\n", 
+			Characters_[ Idx ].Text_.c_str() );
+
 		for ( int Idx2 = 0; Idx2 < person->Information_.size(); ++Idx2 )
 		{
 			int timeLength = person->Information_[ Idx2 ]->EndTimeId_ - person->Information_[ Idx2 ]->StartTimeId_;
@@ -298,6 +332,7 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 				roomName.c_str(), 
 				person->Information_[ Idx2 ]->StartTimeId_ + startTimeOffset,
 				timeLength, timeLength > 1 ? "s" : "");
+
 
 			sprintf( buffer2, "PERSON_%d", targetId );
 			obj.Infos_.push_back( buffer2 );
@@ -379,7 +414,7 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 				// If a person event, spawn a modal.
 				if( Event.SourceType_ == "PERSON" )
 				{
-					useObject( Event.SourceName_ );
+					useObject( Event.Target_ );
 					spawnModal( "MODAL", Event.Target_ );
 				}
 
@@ -488,8 +523,12 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 			return evtRET_PASS;
 		} );
 
+	FontComponent_ = Parent->attach< ScnFontComponent >( "material", Font_, FontMaterial_ );
+
+	Infos_.clear();
 	useObject( Room_ );
 	spawnRoom( Room_ );
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -587,12 +626,7 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 		// If object's location is the room.
 		if( Object.Room_ == Room_ )
 		{
-			auto ObjectEntity = ScnCore::pImpl()->spawnEntity( 
-				ScnEntitySpawnParams( 
-					Object.Object_, getParentEntity()->getBasis()->getOwner()->getName(), Object.Object_,
-					MaMat4d(), CurrentRoomEntity_ ) );
-			BcAssert( ObjectEntity );
-
+			bool IsPerson = false;
 			MaVec2d Position( 0.0f, 0.0f );
 			if( Object.Object_.substr( 0, Person.size() ) == Person ||
 				Object.Object_.substr( 0, Butler.size() ) == Butler  )
@@ -600,6 +634,33 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 				PersonStart += PersonWidth;
 				Position = PersonStart;
 			}
+
+			ScnEntityRef ObjectEntity;
+			if( Object.Object_.substr( 0, Person.size() ) == Person )
+			{
+				auto PersonID = BcName( Object.Object_ ).getID();
+				const auto& Person = Characters_[ PersonID ];
+				ObjectEntity = ScnCore::pImpl()->spawnEntity( 
+				ScnEntitySpawnParams( 
+					Object.Object_, Person.Entity_,
+					MaMat4d(), CurrentRoomEntity_ ) );
+
+				auto ObjectComponent = ObjectEntity->getComponentByType< GaObjectComponent >();
+				ObjectComponent->setup( 
+					Object.Object_,
+					ObjectComponent->ObjectType_, 
+					Object.Object_,
+					nullptr, Position );
+			}
+			else
+			{
+				ObjectEntity = ScnCore::pImpl()->spawnEntity( 
+					ScnEntitySpawnParams( 
+						Object.Object_, getParentEntity()->getBasis()->getOwner()->getName(), Object.Object_,
+						MaMat4d(), CurrentRoomEntity_ ) );
+			}
+			BcAssert( ObjectEntity );
+			
 
 			// Override target.
 			if( !Object.Target_.empty() )
@@ -648,6 +709,10 @@ void GaGameComponent::spawnModal( const BcName& ModalName, const BcName& Target 
 	if( auto* FoundObject = findObject( Target ) )
 	{
 		Modal->setup( FoundObject->InfoText_ );
+	}
+	else
+	{
+		BcBreakpoint;
 	}
 }
 

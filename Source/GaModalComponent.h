@@ -57,8 +57,7 @@ public:
 
 	virtual void onAttach( ScnEntityWeakRef Parent );
 	virtual void onDetach( ScnEntityWeakRef Parent );
-
-
+	
 private:
 	static void setCanvasProjection( const ScnComponentList& Components );
 
@@ -71,9 +70,14 @@ private:
 	class ScnMaterial* Material_;
 	class ScnMaterial* FontMaterial_;
 	class ScnTexture* Texture_;
+	class ScnTexture* TextureButton_;
 	class ScnFont* Font_;
 
 	class ScnMaterialComponent* MaterialComponent_;
+	class ScnMaterialComponent* ButtonMaterialComponent_;
 	class ScnFontComponent* FontComponent_;
+
+	MaVec2d ClickPosition_;
+	BcBool HadClick_;
 };
 
