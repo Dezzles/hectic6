@@ -176,6 +176,79 @@
 			"name"			: "theodore",
 
 			"source"		: "Content/Characters/theodoor.png"
+		},
+
+
+
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "candle",
+
+			"source"		: "Content/Props/candle.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "doll",
+
+			"source"		: "Content/Props/doll.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "prop1",
+
+			"source"		: "Content/Props/prop1.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "prop2",
+
+			"source"		: "Content/Props/prop2.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "prop3",
+
+			"source"		: "Content/Props/prop3.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "prop4",
+
+			"source"		: "Content/Props/prop4.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "prop5",
+
+			"source"		: "Content/Props/prop5.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "prop6",
+
+			"source"		: "Content/Props/prop6.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "lounge",
+
+			"source"		: "Content/Props/lounge.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "bubble",
+
+			"source"		: "Content/UI/bubble.png"
 		}
 
 	]

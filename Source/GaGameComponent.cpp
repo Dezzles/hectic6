@@ -203,7 +203,14 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 	auto Seed = 0x845efad7;
 	int totalHours = 4;
 	int totalPeople = 4;
+
+#if PSY_PRODUCTION
+	static BcTimer Timer;
+	Seed = Timer.time();
+
+#endif
 	
+#if 0
 	// Randomise our room list.
 	srand( Seed );
 	for( int Idx = 0; Idx < Rooms_.size(); ++Idx )
@@ -211,6 +218,9 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 		auto TargetIdx = rand() % Rooms_.size();
 		std::swap( Rooms_[ Idx ], Rooms_[ TargetIdx ] );
 	}
+#endif
+
+	std::swap( Rooms_[ 0 ], Rooms_[ 7 ] );
 
 	// Randomise our character list.
 	for( int Idx = 0; Idx < Characters_.size(); ++Idx )

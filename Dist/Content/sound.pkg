@@ -1,0 +1,12 @@
+{
+
+	"resources" : [
+		{
+			"name"		:		"Sound",
+			"type"		:		"ScnSound",
+			"source"	:		"Content/Sound/HecticMurderParty.ogg",
+			"isstream"	:		true,
+			"isloop"	:		true
+		}
+	]
+}

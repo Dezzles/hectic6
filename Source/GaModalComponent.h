@@ -67,5 +67,13 @@ private:
 	BcU32 CurrentOptionGroup_;
 
 	std::vector< GaModalOptionGroup > OptionGroups_;
+
+	class ScnMaterial* Material_;
+	class ScnMaterial* FontMaterial_;
+	class ScnTexture* Texture_;
+	class ScnFont* Font_;
+
+	class ScnMaterialComponent* MaterialComponent_;
+	class ScnFontComponent* FontComponent_;
 };
 

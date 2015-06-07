@@ -210,6 +210,7 @@ void AutoGenRegisterReflection()
 	GaMovingComponent::StaticRegisterClass();
 	GaNetworkTestComponent::StaticRegisterClass();
 	GaObjectComponent::StaticRegisterClass();
+	GaRoomProp::StaticRegisterClass();
 	GaRoomComponent::StaticRegisterClass();
 	GaTestFontComponent::StaticRegisterClass();
 	GaTestModelComponent::StaticRegisterClass();

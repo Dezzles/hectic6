@@ -260,14 +260,21 @@
 					"background" : [
 						"$(ScnTexture:textures.background)",
 						"$(ScnTexture:textures.tiles)",
-						"$(ScnTexture:textures.wallpaper2)",
-						"$(ScnTexture:textures.wallpaperL2)",
-						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.wall1)",
+						"$(ScnTexture:textures.wallL1)",
+						"$(ScnTexture:textures.wallR1)",					
 						"$(ScnTexture:textures.lines)"
 					],
 
 					"foreground" : [
 						"$(ScnTexture:textures.vignette)"
+					],
+
+					"props" : [
+						{
+							"position" : "350.0, 300.0",
+							"texture" : "$(ScnTexture:textures.prop6)"
+						}
 					]
 				}
 			]
@@ -288,7 +295,7 @@
 					"material" : "$(ScnMaterial:materials.background)",
 					"background" : [
 						"$(ScnTexture:textures.background)",
-						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.floortexture)",
 						"$(ScnTexture:textures.wallpaper2)",
 						"$(ScnTexture:textures.wallpaperL2)",
 						"$(ScnTexture:textures.wallpaperR2)",					
@@ -297,6 +304,14 @@
 
 					"foreground" : [
 						"$(ScnTexture:textures.vignette)"
+					],
+				
+					"props" : [
+						{
+							"position" : "450.0, 100.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.prop5)"
+						}
 					]
 				}
 			]
@@ -317,7 +332,7 @@
 					"material" : "$(ScnMaterial:materials.background)",
 					"background" : [
 						"$(ScnTexture:textures.background)",
-						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.floortexture)",
 						"$(ScnTexture:textures.wallpaper2)",
 						"$(ScnTexture:textures.wallpaperL2)",
 						"$(ScnTexture:textures.wallpaperR2)",					
@@ -326,6 +341,25 @@
 
 					"foreground" : [
 						"$(ScnTexture:textures.vignette)"
+					],
+
+					"props" : [
+						{
+							"position" : "450.0, 100.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.prop5)"
+						},
+
+						{
+							"position" : "320.0, 300.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.prop3)"
+						},
+
+						{
+							"position" : "320.0, 200.0",
+							"texture" : "$(ScnTexture:textures.lounge)"
+						}
 					]
 				}
 			]
@@ -349,12 +383,27 @@
 						"$(ScnTexture:textures.tiles)",
 						"$(ScnTexture:textures.wallpaper2)",
 						"$(ScnTexture:textures.wallpaperL2)",
-						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.wallpaperR2)",
 						"$(ScnTexture:textures.lines)"
 					],
 
 					"foreground" : [
 						"$(ScnTexture:textures.vignette)"
+					],
+
+					"props" : [
+						{
+							"position" : "300.0, 200.0",
+							"scale" : "0.3, 0.3",
+							"texture" : "$(ScnTexture:textures.prop4)"
+						},
+
+						{
+							"position" : "600.0, 200.0",
+							"scale" : "0.3, 0.3",
+							"texture" : "$(ScnTexture:textures.prop4)"
+						}
+
 					]
 				}
 			]
@@ -376,15 +425,31 @@
 					"background" : [
 						"$(ScnTexture:textures.background)",
 						"$(ScnTexture:textures.tiles)",
-						"$(ScnTexture:textures.wallpaper2)",
-						"$(ScnTexture:textures.wallpaperL2)",
-						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.wall1)",
+						"$(ScnTexture:textures.wallL1)",
+						"$(ScnTexture:textures.wallR1)",					
 						"$(ScnTexture:textures.lines)"
 					],
 
 					"foreground" : [
 						"$(ScnTexture:textures.vignette)"
+					],
+				
+					"props" : [
+						{
+							"position" : "350.0, 300.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.prop2)"
+						},
+
+						{
+							"position" : "550.0, 300.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.prop1)"
+						}
+
 					]
+
 				}
 			]
 		},
@@ -404,7 +469,7 @@
 					"material" : "$(ScnMaterial:materials.background)",
 					"background" : [
 						"$(ScnTexture:textures.background)",
-						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.floortexture)",
 						"$(ScnTexture:textures.wallpaper2)",
 						"$(ScnTexture:textures.wallpaperL2)",
 						"$(ScnTexture:textures.wallpaperR2)",					
@@ -413,6 +478,25 @@
 
 					"foreground" : [
 						"$(ScnTexture:textures.vignette)"
+					],
+
+					"props" : [
+						{
+							"position" : "450.0, 100.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.prop5)"
+						},
+
+						{
+							"position" : "300.0, 200.0",
+							"scale" : "0.35, 0.335",
+							"texture" : "$(ScnTexture:textures.prop1)"
+						},
+
+						{
+							"position" : "330.0, 200.0",
+							"texture" : "$(ScnTexture:textures.lounge)"
+						}
 					]
 				}
 			]
@@ -434,16 +518,36 @@
 					"material" : "$(ScnMaterial:materials.background)",
 					"background" : [
 						"$(ScnTexture:textures.background)",
-						"$(ScnTexture:textures.tiles)",
-						"$(ScnTexture:textures.wallpaper2)",
-						"$(ScnTexture:textures.wallpaperL2)",
-						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.floortexture)",
+						"$(ScnTexture:textures.wall1)",
+						"$(ScnTexture:textures.wallL1)",
+						"$(ScnTexture:textures.wallR1)",					
 						"$(ScnTexture:textures.lines)"
 					],
 
 					"foreground" : [
 						"$(ScnTexture:textures.vignette)"
-					]
+					],
+
+					"props" : [
+						{
+							"position" : "230.0, 280.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.lounge)"
+						},
+
+						{
+							"position" : "570.0, 280.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.lounge)"
+						},
+					
+						{
+							"position" : "600.0, 370.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.prop3)"
+						}
+					]				
 				}
 			]
 		},
@@ -473,6 +577,37 @@
 
 					"foreground" : [
 						"$(ScnTexture:textures.vignette)"
+					],
+
+					"props" : [
+						{
+							"position" : "450.0, 100.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.prop5)"
+						},
+
+						{
+							"position" : "250.0, 300.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.prop1)"
+						},
+
+						{
+							"position" : "450.0, 330.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.prop2)"
+						},
+
+						{
+							"position" : "650.0, 315.0",
+							"scale" : "0.2, 0.2",
+							"texture" : "$(ScnTexture:textures.prop3)"
+						},
+
+						{
+							"position" : "330.0, 250.0",
+							"texture" : "$(ScnTexture:textures.lounge)"
+						}
 					]
 				}
 			]
@@ -674,11 +809,10 @@
 					"$Class" : "GaModalComponent",
 					"type" : "GaModalComponent",
 
-					"text" : "This is some information about ROOM_KITCHEN",
-
-					"unlock" : [
-						"ROOM_KITCHEN"
-					]
+					"material" : "$(ScnMaterial:materials.background)",
+					"fontmaterial" : "$(ScnMaterial:fonts.font_material)",
+					"texture" : "$(ScnTexture:textures.bubble)",
+					"font" : "$(ScnFont:fonts.courier)"
 				}
 			]
 		}

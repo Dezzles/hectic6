@@ -2,6 +2,7 @@
 #include "GaGameComponent.h"
 
 #include "System/Scene/Rendering/ScnCanvasComponent.h"
+#include "System/Scene/Rendering/ScnFont.h"
 
 #include "System/Content/CsPackage.h"
 #include "System/Content/CsCore.h"
@@ -54,6 +55,14 @@ void GaModalComponent::StaticRegisterClass()
 		new ReField( "CurrentOptionGroup_", &GaModalComponent::CurrentOptionGroup_, bcRFF_TRANSIENT ),
 
 		new ReField( "OptionGroups_", &GaModalComponent::OptionGroups_, bcRFF_IMPORTER ),
+
+		new ReField( "Material_", &GaModalComponent::Material_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+		new ReField( "FontMaterial_", &GaModalComponent::FontMaterial_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+		new ReField( "Texture_", &GaModalComponent::Texture_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+		new ReField( "Font_", &GaModalComponent::Font_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+
+		new ReField( "MaterialComponent_", &GaModalComponent::MaterialComponent_, bcRFF_TRANSIENT ),
+		new ReField( "FontComponent_", &GaModalComponent::FontComponent_, bcRFF_TRANSIENT ),
 	};
 
 	using namespace std::placeholders;
@@ -102,6 +111,35 @@ void GaModalComponent::StaticRegisterClass()
 										InComponent->getParentEntity()->publish( gaEVT_FLOW_ACTION, Event, BcFalse );
 									}
 								}
+
+								// Draw!
+								if( Component->MaterialComponent_ )
+								{
+									auto Pos = MaVec2d( 640.0f, 200.0f );
+									auto Size = MaVec2d( Component->Texture_->getWidth(), Component->Texture_->getHeight() );
+									auto Canvas = Component->Canvas_;
+									Canvas->setMaterialComponent( Component->MaterialComponent_ );
+									Canvas->drawSpriteCentered( 
+										Pos,
+										Size,
+										0, 
+										RsColour::WHITE, 100 );
+
+									ScnFontDrawParams Params = ScnFontDrawParams()
+										.setAlignment( ScnFontAlignment::HCENTRE | ScnFontAlignment::VCENTRE )
+										.setLayer( 101 )
+										.setTextColour( RsColour::BLACK )
+										.setSize( 24.0f );
+									
+									Pos -= Size * 0.5f;
+
+									Component->FontComponent_->drawText( 
+										Canvas, 
+										Params,
+										Pos,
+										Size,
+										OptionGroup.Text_ );
+								}
 							}
 							ImGui::End();
 						}
@@ -113,7 +151,13 @@ void GaModalComponent::StaticRegisterClass()
 // Ctor
 GaModalComponent::GaModalComponent():
 	Canvas_( nullptr ),
-	CurrentOptionGroup_( 0 )
+	CurrentOptionGroup_( 0 ),
+	Material_( nullptr ),
+	FontMaterial_( nullptr ),
+	Texture_( nullptr ),
+	Font_( nullptr ),
+	MaterialComponent_( nullptr ),
+	FontComponent_( nullptr )
 {
 
 }
@@ -196,6 +240,12 @@ void GaModalComponent::onAttach( ScnEntityWeakRef Parent )
 	Super::onAttach( Parent );
 
 	Canvas_ = getParentEntity()->getComponentAnyParentByType< ScnCanvasComponent >();
+
+	MaterialComponent_ = Parent->attach< ScnMaterialComponent >( "material", Material_, ScnShaderPermutationFlags::MESH_STATIC_2D );
+	MaterialComponent_->setTexture( "aDiffuseTex", Texture_ );
+
+	FontComponent_ = Parent->attach< ScnFontComponent >( "material", Font_, FontMaterial_ );
+
 }
 
 //////////////////////////////////////////////////////////////////////////
