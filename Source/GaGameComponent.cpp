@@ -19,6 +19,7 @@
 // Define resource internals.
 REFLECTION_DEFINE_BASIC( GaGameObject );
 REFLECTION_DEFINE_BASIC( GaSolutionObject );
+REFLECTION_DEFINE_BASIC( GaRoomObject );
 REFLECTION_DEFINE_DERIVED( GaGameComponent );
 
 void GaGameObject::StaticRegisterClass()
@@ -51,6 +52,32 @@ void GaSolutionObject::StaticRegisterClass()
 }
 
 
+void GaRoomObject::StaticRegisterClass()
+{
+	ReField* Fields[] =
+	{
+		new ReField( "Entity_", &GaRoomObject::Entity_, bcRFF_SHALLOW_COPY ),
+		new ReField( "Text_", &GaRoomObject::Text_ ),
+		new ReField( "Verbs_", &GaRoomObject::Verbs_ ),
+	};
+
+	ReRegisterClass< GaRoomObject >( Fields );
+}
+
+
+void GaCharacterObject::StaticRegisterClass()
+{
+	ReField* Fields[] =
+	{
+		new ReField( "Entity_", &GaCharacterObject::Entity_, bcRFF_SHALLOW_COPY ),
+		new ReField( "Text_", &GaCharacterObject::Text_ ),
+		new ReField( "ValidNames_", &GaCharacterObject::ValidNames_ ),
+	};
+
+	ReRegisterClass< GaCharacterObject >( Fields );
+}
+
+
 void GaGameComponent::StaticRegisterClass()
 {
 	ReField* Fields[] = 
@@ -62,8 +89,10 @@ void GaGameComponent::StaticRegisterClass()
 		
 		new ReField( "CharacterNames_", &GaGameComponent::CharacterNames_, bcRFF_IMPORTER ),
 
-		new ReField( "Room_", &GaGameComponent::Room_, bcRFF_IMPORTER ),
 		new ReField( "Rooms_", &GaGameComponent::Rooms_, bcRFF_IMPORTER ),	
+		new ReField( "Characters_", &GaGameComponent::Characters_, bcRFF_IMPORTER ),	
+
+		new ReField( "Room_", &GaGameComponent::Room_, bcRFF_IMPORTER ),
 		new ReField( "Objects_", &GaGameComponent::Objects_, bcRFF_IMPORTER ),	
 		new ReField( "Solution_", &GaGameComponent::Solution_, bcRFF_IMPORTER ),
 		new ReField( "AttemptedSolutionObjects_", &GaGameComponent::AttemptedSolutionObjects_, bcRFF_TRANSIENT ),
@@ -164,43 +193,72 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 	Super::onAttach( Parent );
 
 	Canvas_ = getParentEntity()->getComponentAnyParentByType< ScnCanvasComponent >();
-	WorldGen::Generator gen( 4, 4, 0x845efad7 );
+	//0x845efad7 4,4 - Solvable puzzle.
+	//0x12345678 4,4 - Solvable puzzle.
+	//0x11111111 3,3 - 
+	auto Seed = 0x11111111;
+	
+	// Randomise our room list.
+	srand( Seed );
+	for( int Idx = 0; Idx < Rooms_.size(); ++Idx )
+	{
+		auto TargetIdx = rand() % Rooms_.size();
+		std::swap( Rooms_[ Idx ], Rooms_[ TargetIdx ] );
+	}
+
+	// Randomise our character list.
+	for( int Idx = 0; Idx < Characters_.size(); ++Idx )
+	{
+		auto TargetIdx = rand() % Characters_.size();
+		std::swap( Characters_[ Idx ], Characters_[ TargetIdx ] );
+
+
+	}
+
+	// Gen the world.
+	WorldGen::Generator gen( 3, 3, 0x11111111 );
 	char buffer[ 2048 ];
 	char buffer2[ 64 ];
+	std::set< int > RoomIds;
 	for ( int Idx = 0; Idx < gen.People_.Size(); ++Idx )
 	{
 		WorldGen::Person* person = gen.People_.GetItem( Idx );
 		GaGameObject obj;
+
+		int RoomId = Idx % gen.Rooms_.Size();
 		sprintf(buffer, "PERSON_%d", person->Id_);
 		obj.Object_ = buffer;
-		sprintf(buffer, "ROOM_%d", Idx);
+		sprintf(buffer, "ROOM_%d", RoomId);
 		obj.Room_ = buffer;
+		RoomIds.insert( RoomId );
 
 		int start = 0;
 		for ( int Idx2 = 0; Idx2 < person->Information_.size(); ++Idx2 )
 		{
 			int timeLength = person->Information_[ Idx2 ]->EndTimeId_ - person->Information_[ Idx2 ]->StartTimeId_;
+			int InfoRoomId = gen.Rooms_.GetItemById(person->Information_[ Idx2 ]->RoomId_ )->NormalRoomId_;
 			start += sprintf( &buffer[start], "I was with PERSON_%d in the ROOM_%d at %d:00 for %d hour%s.\n", 
 				person->Information_[ Idx2 ]->TargetId_ , // TargetId.
-				gen.Rooms_.GetItemById(person->Information_[ Idx2 ]->RoomId_ )->NormalRoomId_, 
+				InfoRoomId, 
 				person->Information_[ Idx2 ]->StartTimeId_ + 11,
 				timeLength, timeLength > 1 ? "s" : "");
 			sprintf( buffer2, "PERSON_%d", person->Information_[ Idx2 ]->TargetId_ );
 			obj.Infos_.push_back( buffer2 );
 			sprintf( buffer2, "ROOM_%d", gen.Rooms_.GetItemById( person->Information_[ Idx2 ]->RoomId_ )->NormalRoomId_ );
+			
 			obj.Infos_.push_back( buffer2 );
 		}
 		obj.InfoText_ = buffer;
 		Objects_.push_back(obj);
 	}
 
-	for ( int Idx = 0; Idx < gen.Rooms_.Size(); ++Idx )
+	int Idx = 0;
+	for ( auto RoomId : RoomIds )
 	{
-		WorldGen::Room* room = gen.Rooms_.GetItem( Idx );
 		GaGameObject obj;
-		sprintf( buffer, "DOOR_LEFT", room->NormalRoomId_ );
+		sprintf( buffer, "DOOR_LEFT", RoomId );
 		obj.Object_ = buffer;
-		sprintf( buffer, "ROOM_%d", room->NormalRoomId_ );
+		sprintf( buffer, "ROOM_%d", RoomId );
 		obj.Room_= buffer;
 		if ( Idx == 0 )
 		{
@@ -215,24 +273,26 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 		}
 		Objects_.push_back(obj);
 
-		if ( Idx < gen.Rooms_.Size() - 1 )
+		if ( Idx < RoomIds.size() - 1 )
 		{
 			GaGameObject obj;
-			sprintf( buffer, "DOOR_RIGHT", room->NormalRoomId_ );
+			sprintf( buffer, "DOOR_RIGHT", RoomId );
 			obj.Object_ = buffer;
-			sprintf( buffer, "ROOM_%d", room->NormalRoomId_ );
+			sprintf( buffer, "ROOM_%d", RoomId );
 			obj.Room_ = buffer;
-			if ( Idx == 0 )
-			{
-				sprintf( buffer, "ROOM_%d", Idx + 1 );
-				obj.Target_ = buffer;
-				obj.Infos_.push_back( buffer );
-			}
+
+			sprintf( buffer, "ROOM_%d", Idx + 1 );
+			obj.Target_ = buffer;
+			obj.Infos_.push_back( buffer );
+
 			Objects_.push_back( obj );
 
 		}
+
+		++Idx;
 	}
 
+	
 	// Subscribe to events
 	getParentEntity()->subscribe( gaEVT_FLOW_ACTION, this,
 		[ this ]( EvtID ID, const EvtBaseEvent& InEvent )
@@ -409,7 +469,8 @@ void GaGameComponent::spawnRoom( const BcName& RoomName )
 			if( !Object.Target_.empty() )
 			{
 				auto ObjectComponent = ObjectEntity->getComponentByType< GaObjectComponent >();
-				ObjectComponent->setup( Object.Object_, ObjectComponent->ObjectType_, Object.Target_, nullptr );
+				ObjectComponent->setup( Object.Object_, ObjectComponent->ObjectType_, Object.Target_, nullptr, 
+					MaVec2d( 0.0f, 0.0f ) );
 			}
 		}
 	}

@@ -140,7 +140,42 @@
 			"type"			: "ScnTexture",
 			"name"			: "butler",
 
-			"source"		: "Content/Rooms/BUTLER.png"
+			"source"		: "Content/Characters/BUTLER.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "npc1",
+
+			"source"		: "Content/Characters/npc1.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "npc2",
+
+			"source"		: "Content/Characters/npc2.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "npc3",
+
+			"source"		: "Content/Characters/npc3.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "npc4",
+
+			"source"		: "Content/Characters/npc4.png"
+		},
+
+		{
+			"type"			: "ScnTexture",
+			"name"			: "theodore",
+
+			"source"		: "Content/Characters/theodoor.png"
 		}
 
 	]

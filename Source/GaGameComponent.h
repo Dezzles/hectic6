@@ -57,6 +57,32 @@ struct GaSolutionObject
 };
 
 //////////////////////////////////////////////////////////////////////////
+// GaRoomObject
+struct GaRoomObject
+{
+	REFLECTION_DECLARE_BASIC( GaRoomObject );
+	GaRoomObject():
+		Entity_( nullptr )
+	{}
+	class ScnEntity* Entity_;
+	std::string Text_;
+	std::vector< std::string > Verbs_;
+};
+
+//////////////////////////////////////////////////////////////////////////
+// GaCharacterObject
+struct GaCharacterObject
+{
+	REFLECTION_DECLARE_BASIC( GaCharacterObject );
+	GaCharacterObject():
+		Entity_( nullptr )
+	{}
+	class ScnEntity* Entity_;
+	std::string Text_;
+	std::vector< std::string > ValidNames_;
+};
+
+//////////////////////////////////////////////////////////////////////////
 // GaGameComponent
 class GaGameComponent:
 	public ScnComponent
@@ -94,10 +120,12 @@ private:
 	ScnEntityRef CurrentRoomEntity_;
 	ScnEntityRef ModalDialogEntity_;
 	
+	std::vector< GaRoomObject > Rooms_;
+	std::vector< GaCharacterObject > Characters_;
+
 	// TODO: Use BcNames...
 	std::string Room_;
-	std::list< std::string > Rooms_;
-	std::list< GaGameObject > Objects_;
+	std::vector< GaGameObject > Objects_;
 	std::set< std::string > Infos_;
 	std::vector< GaSolutionObject > Solution_;
 	BcU32 AttemptedSolutionObjects_;

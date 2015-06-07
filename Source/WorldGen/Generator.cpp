@@ -10,6 +10,7 @@ WorldGen::Generator::Generator( int People, int Hours, int Seed )
 	int GuiltyX = -1;
 	int GuiltyY = -1;
 	int NormalRoomId = 0;
+
 	for ( int Idx1 = 0; Idx1 < Mapper_.Width_; ++Idx1 )
 	{
 		for ( int Idx2 = 0; Idx2 < Mapper_.Height_; ++Idx2 )

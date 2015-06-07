@@ -51,7 +51,7 @@ namespace WorldGen
 			return Data[ Pos ];
 		}
 
-		int Size()
+		size_t Size()
 		{
 			return Data.size();
 		}

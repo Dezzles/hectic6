@@ -31,6 +31,9 @@ void GaObjectComponent::StaticRegisterClass()
 
 		new ReField( "Material_", &GaObjectComponent::Material_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
 		new ReField( "Texture_", &GaObjectComponent::Texture_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+
+		new ReField( "Position_", &GaObjectComponent::Position_, bcRFF_IMPORTER ),
+		new ReField( "Size_", &GaObjectComponent::Size_, bcRFF_IMPORTER ),
 	};
 
 	using namespace std::placeholders;
@@ -66,8 +69,8 @@ void GaObjectComponent::StaticRegisterClass()
 								auto Canvas = Component->Canvas_;
 								Canvas->setMaterialComponent( Component->MaterialComponent_ );
 								Canvas->drawSprite( 
-									MaVec2d( 0.0f, 0.0f ),
-									MaVec2d( 1280.0f, 720.0f ), 
+									Component->Position_,
+									Component->Size_, 
 									0, 
 									RsColour::WHITE, 50 );
 							}
@@ -84,7 +87,9 @@ GaObjectComponent::GaObjectComponent():
 	Canvas_( nullptr ),
 	Material_( nullptr ),
 	Texture_( nullptr ),
-	MaterialComponent_( nullptr )
+	MaterialComponent_( nullptr ),
+	Position_( 0.0f, 0.0f ),
+	Size_( 1280.0f, 720.0f )
 {
 
 }
@@ -129,11 +134,15 @@ void GaObjectComponent::setup(
 		const std::string& Name, 
 		const std::string& Type, 
 		const std::string& Target,
-		class ScnTexture* Texture )
+		class ScnTexture* Texture,
+		MaVec2d Position )
 {
 	BcAssert( isAttached() == BcFalse );
 	ObjectName_ = Name;
 	ObjectType_ = Type;
 	Target_ = Target;
-	Texture_ = Texture;
+	if( Texture != nullptr )
+	{
+		Texture_ = Texture;
+	}
 }

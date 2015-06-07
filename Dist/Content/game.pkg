@@ -34,15 +34,139 @@
 						"Chris",
 						"Dana"
 					],
-					"roomnames" : [
-						"Verandah",
-						"Garage",
-						"Study",
-						"Lounge",
-						"Kitchen",
-						"PotatoRoom",
-						"Bedroom",
-						"Garden"
+
+					"rooms" : [
+						{
+							"entity" : "$(ScnEntity:this.ROOM_0)",
+							"text" : "Kitchen",
+							"verbs": [
+								"eating",
+								"cooking",
+								"cleaning"
+							]
+						},
+
+						{
+							"entity" : "$(ScnEntity:this.ROOM_1)",
+							"text" : "Study",
+							"verbs": [
+								"working",
+								"relaxing",
+								"chatting",
+								"hanging out"
+							]
+						},
+
+						{
+							"entity" : "$(ScnEntity:this.ROOM_2)",
+							"text" : "Lounge",
+							"verbs": [
+								"relaxing",
+								"hanging out",
+								"watching TV"
+							]
+						},
+
+						{
+							"entity" : "$(ScnEntity:this.ROOM_3)",
+							"text" : "Bedroom",
+							"verbs": [
+								"sleeping",
+								"D'n'Ming",
+								"tidying",
+								"creating euphemisms",
+								"baking"
+							]
+						},
+
+						{
+							"entity" : "$(ScnEntity:this.ROOM_4)",
+							"text" : "Bathroom",
+							"verbs": [
+								"brushing teeth",
+								"cleaning",
+								"getting annoyed"
+							]
+						},
+
+						{
+							"entity" : "$(ScnEntity:this.ROOM_5)",
+							"text" : "Rumpus room",
+							"verbs": [
+								"relaxing",
+								"hanging out",
+								"watching TV",
+								"playing Xbox"
+							]
+						},
+
+						{
+							"entity" : "$(ScnEntity:this.ROOM_6)",
+							"text" : "Living room",
+							"verbs": [
+								"relaxing",
+								"hanging out",
+								"sitting quietly"
+							]
+						},
+
+						{
+							"entity" : "$(ScnEntity:this.ROOM_7)",
+							"text" : "Dining room",
+							"verbs": [
+								"eating food",
+								"playing board games",
+								"game jamming"
+							]
+						}
+					],
+
+
+					"rooms" : [
+						{
+							"entity" : "$(ScnEntity:this.PERSON_0)",
+							"text" : "PERSON_0",
+							"validnames": [
+								"Zorp",
+								"Xenu",
+								"Mork"
+							]
+						},
+
+						{
+							"entity" : "$(ScnEntity:this.PERSON_1)",
+							"text" : "PERSON_1",
+							"validnames": [
+								"Lady Fur"
+							]
+						},
+
+						{
+							"entity" : "$(ScnEntity:this.PERSON_2)",
+							"text" : "PERSON_2",
+							"validnames": [
+								"Dana",
+								"Alice",
+								"Jen"
+							]
+						},
+
+						{
+							"entity" : "$(ScnEntity:this.PERSON_3)",
+							"text" : "PERSON_3",
+							"validnames": [
+								"Fairy Buttercup",
+								"Mrs Bouquet"
+							]
+						},
+					
+						{
+							"entity" : "$(ScnEntity:this.PERSON_4)",
+							"text" : "PERSON_4",
+							"validnames": [
+								"Theodore"
+							]
+						}
 					],
 
 					"objects" : [
@@ -50,15 +174,16 @@
 						{
 							"Object_" : "BUTLER_GAME",
 							"Room_" : "ROOM_LOBBY",
-							"InfoText_" : "Welcome to the game. I am a butler."
+							"InfoText_" : "Someone has been murdered. I'm sick of cleaning up this miss, could you find out who done it for me?"
 						},
 
 						{
-							"Object_" : "DOOR_LOUNGE",
+							"Object_" : "DOOR_RIGHT",
 							"Room_" : "ROOM_LOBBY",
 							"Infos_" : [
 								"ROOM_LOUNGE"
-							]
+							],
+							"Target_" : "ROOM_0"
 						}
 
 					],
@@ -108,7 +233,21 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "ROOM_0"
+					"roomname" : "ROOM_0",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"background" : [
+						"$(ScnTexture:textures.background)",
+						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.wallpaper2)",
+						"$(ScnTexture:textures.wallpaperL2)",
+						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.lines)"
+					],
+
+					"foreground" : [
+						"$(ScnTexture:textures.vignette)"
+					]
 				}
 			]
 		},
@@ -123,7 +262,21 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "ROOM_1"
+					"roomname" : "ROOM_1",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"background" : [
+						"$(ScnTexture:textures.background)",
+						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.wallpaper2)",
+						"$(ScnTexture:textures.wallpaperL2)",
+						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.lines)"
+					],
+
+					"foreground" : [
+						"$(ScnTexture:textures.vignette)"
+					]
 				}
 			]
 		},
@@ -138,7 +291,21 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "ROOM_2"
+					"roomname" : "ROOM_2",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"background" : [
+						"$(ScnTexture:textures.background)",
+						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.wallpaper2)",
+						"$(ScnTexture:textures.wallpaperL2)",
+						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.lines)"
+					],
+
+					"foreground" : [
+						"$(ScnTexture:textures.vignette)"
+					]
 				}
 			]
 		},
@@ -153,7 +320,21 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "ROOM_3"
+					"roomname" : "ROOM_3",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"background" : [
+						"$(ScnTexture:textures.background)",
+						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.wallpaper2)",
+						"$(ScnTexture:textures.wallpaperL2)",
+						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.lines)"
+					],
+
+					"foreground" : [
+						"$(ScnTexture:textures.vignette)"
+					]
 				}
 			]
 		},
@@ -168,7 +349,21 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "ROOM_4"
+					"roomname" : "ROOM_4",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"background" : [
+						"$(ScnTexture:textures.background)",
+						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.wallpaper2)",
+						"$(ScnTexture:textures.wallpaperL2)",
+						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.lines)"
+					],
+
+					"foreground" : [
+						"$(ScnTexture:textures.vignette)"
+					]
 				}
 			]
 		},
@@ -183,7 +378,21 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "ROOM_5"
+					"roomname" : "ROOM_5",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"background" : [
+						"$(ScnTexture:textures.background)",
+						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.wallpaper2)",
+						"$(ScnTexture:textures.wallpaperL2)",
+						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.lines)"
+					],
+
+					"foreground" : [
+						"$(ScnTexture:textures.vignette)"
+					]
 				}
 			]
 		},
@@ -199,7 +408,21 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "ROOM_6"
+					"roomname" : "ROOM_6",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"background" : [
+						"$(ScnTexture:textures.background)",
+						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.wallpaper2)",
+						"$(ScnTexture:textures.wallpaperL2)",
+						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.lines)"
+					],
+
+					"foreground" : [
+						"$(ScnTexture:textures.vignette)"
+					]
 				}
 			]
 		},
@@ -215,7 +438,21 @@
 					"$Class" : "GaRoomComponent",
 					"type" : "GaRoomComponent",
 
-					"roomname" : "ROOM_7"
+					"roomname" : "ROOM_7",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"background" : [
+						"$(ScnTexture:textures.background)",
+						"$(ScnTexture:textures.tiles)",
+						"$(ScnTexture:textures.wallpaper2)",
+						"$(ScnTexture:textures.wallpaperL2)",
+						"$(ScnTexture:textures.wallpaperR2)",					
+						"$(ScnTexture:textures.lines)"
+					],
+
+					"foreground" : [
+						"$(ScnTexture:textures.vignette)"
+					]
 				}
 			]
 		},
@@ -234,7 +471,13 @@
 
 					"objectname" : "Butler",
 					"objecttype" : "BUTLER",
-					"target": "BUTLER_GAME"
+					"target": "BUTLER_GAME",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.butler)",
+
+					"position" : "400.0, 300.0",
+					"size" : "266.0, 413.0"
 				}
 			]
 		},
@@ -251,7 +494,13 @@
 
 					"objectname" : "PERSON_0",
 					"objecttype" : "PERSON",
-					"target": "PERSON_0"
+					"target": "PERSON_0",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.npc1)",
+
+					"position" : "400.0, 300.0",
+					"size" : "270.0, 504.0"
 				}
 			]
 		},
@@ -268,7 +517,13 @@
 
 					"objectname" : "PERSON_1",
 					"objecttype" : "PERSON",
-					"target": "PERSON_1"
+					"target": "PERSON_1",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.npc2)",
+
+					"position" : "400.0, 300.0",
+					"size" : "270.0, 504.0"
 				}
 			]
 		},
@@ -285,10 +540,17 @@
 
 					"objectname" : "PERSON_2",
 					"objecttype" : "PERSON",
-					"target": "PERSON_2"
+					"target": "PERSON_2",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.npc3)",
+
+					"position" : "400.0, 300.0",
+					"size" : "270.0, 504.0"
 				}
 			]
 		},
+
 		{
 			"name" : "PERSON_3",
 			"$Class" : "ScnEntity",
@@ -301,11 +563,16 @@
 
 					"objectname" : "PERSON_3",
 					"objecttype" : "PERSON",
-					"target": "PERSON_3"
+					"target": "PERSON_3",
+
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.npc4)",
+
+					"position" : "400.0, 300.0",
+					"size" : "270.0, 504.0"
 				}
 			]
 		},
-
 
 		{
 			"name" : "PERSON_4",
@@ -319,24 +586,13 @@
 
 					"objectname" : "PERSON_4",
 					"objecttype" : "PERSON",
-					"target": "PERSON_4"
-				}
-			]
-		},
+					"target": "PERSON_4",
 
-		{
-			"name" : "PERSON_5",
-			"$Class" : "ScnEntity",
-			"type" : "ScnEntity",
+					"material" : "$(ScnMaterial:materials.background)",
+					"texture" : "$(ScnTexture:textures.theodore)",
 
-			"components" : [
-				{
-					"$Class" : "GaObjectComponent",
-					"type" : "GaObjectComponent",
-
-					"objectname" : "PERSON_5",
-					"objecttype" : "PERSON",
-					"target": "PERSON_5"
+					"position" : "400.0, 300.0",
+					"size" : "270.0, 504.0"
 				}
 			]
 		},

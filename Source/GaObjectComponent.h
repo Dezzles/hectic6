@@ -27,7 +27,8 @@ public:
 		const std::string& Name, 
 		const std::string& Type, 
 		const std::string& Target,
-		class ScnTexture* Texture );
+		class ScnTexture* Texture,
+		MaVec2d Position );
 
 private:
 	static void setCanvasProjection( const ScnComponentList& Components );
@@ -41,6 +42,9 @@ public:
 
 	class ScnMaterial* Material_;
 	class ScnTexture* Texture_;
+
+	MaVec2d Position_;
+	MaVec2d Size_;
 
 	class ScnMaterialComponent* MaterialComponent_;
 
