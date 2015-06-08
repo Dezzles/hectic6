@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <cstdlib>
 
 WorldGen::Mapper::Mapper( int Width, int Height, int Seed )
 	:Width_( Width ), Height_( Height ), Seed_( Seed )

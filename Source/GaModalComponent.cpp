@@ -291,7 +291,7 @@ void GaModalComponent::onAttach( ScnEntityWeakRef Parent )
 	FontComponent_ = Parent->attach< ScnFontComponent >( "material", Font_, FontMaterial_ );
 
 	OsCore::pImpl()->subscribe( osEVT_INPUT_MOUSEDOWN, this, 
-		[ this ]( EvtID, const EvtBaseEvent& InEvent ) -> eEvtReturn
+		[ this ]( EvtID, const EvtBaseEvent& InEvent )->eEvtReturn
 		{
 			const auto& Event = InEvent.get< OsEventInputMouse >();
 			ClickPosition_ = MaVec2d( Event.MouseX_, Event.MouseY_ );

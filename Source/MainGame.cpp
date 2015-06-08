@@ -46,6 +46,7 @@ void PsyLaunchGame()
 	ScnEntitySpawnParams ScreenEntityParams = 
 	{
 		"GameEntity_0", "game", "GameEntity",
+//		"GameEntity_0", "sprite_test", "TestEntity",
 		MaMat4d(),
 		nullptr
 	};

@@ -1,5 +1,8 @@
 #include "Generator.h"
+#include <cstdlib>
+
 #include "cpplinq.hpp"
+
 WorldGen::Generator::Generator( int People, int Hours, int Seed )
 	:Mapper_(People, Hours, Seed), Murder_( 0 )
 {
