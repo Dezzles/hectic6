@@ -6,6 +6,8 @@
 #include "System/Scene/Rendering/ScnCanvasComponent.h"
 #include "System/Scene/Rendering/ScnFont.h"
 
+#include "System/Scene/Sound/ScnSoundEmitter.h"
+
 #include "System/Content/CsPackage.h"
 #include "System/Content/CsCore.h"
 #include "System/Debug/DsImGui.h"
@@ -106,6 +108,9 @@ void GaGameComponent::StaticRegisterClass()
 		
 		new ReField( "FontMaterial_", &GaGameComponent::FontMaterial_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
 		new ReField( "Font_", &GaGameComponent::Font_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+
+		new ReField( "Music_", &GaGameComponent::Music_, bcRFF_IMPORTER | bcRFF_SHALLOW_COPY ),
+
 	};
 
 	using namespace std::placeholders;
@@ -155,7 +160,8 @@ void GaGameComponent::StaticRegisterClass()
 								.setAlignment( ScnFontAlignment::HCENTRE | ScnFontAlignment::VCENTRE )
 								.setLayer( 80 )
 								.setTextColour( RsColour::BLACK )
-								.setSize( 40.0f );
+								.setSize( 40.0f )
+								.setTextSettings( MaVec4d( 0.40f, 0.45f, -1.0f, -1.0f ) );
 
 							BcName RoomName = TestComponent->Room_;
 
@@ -166,8 +172,8 @@ void GaGameComponent::StaticRegisterClass()
 									TestComponent->Canvas_, 
 									Params,
 									MaVec2d( 0.0f, 0.0f ),
-									MaVec2d( 1280.0f, 100.0f ),
-									"Lobby" );
+									MaVec2d( 1280.0f, 200.0f ),
+									"The Private Dick\nby Amy, Dezzles, NeiloGD, and Music by Jared" );
 							}
 							else
 							{							
@@ -178,7 +184,7 @@ void GaGameComponent::StaticRegisterClass()
 									MaVec2d( 1280.0f, 100.0f ),
 									TestComponent->Rooms_[ RoomName.getID() ].Text_ );
 							}
-
+#if 0
 							ImGui::Begin( "Game" );
 							for( auto InComponent : Components )
 							{
@@ -193,6 +199,7 @@ void GaGameComponent::StaticRegisterClass()
 							}
 
 							ImGui::End();
+#endif
 						}
 					} ),
 			} ) );
@@ -205,9 +212,13 @@ GaGameComponent::GaGameComponent():
 	GameState_( GameState::IDLE ),
 	AttemptedSolutionObjects_( 0 ),
 	CorrectSolutionObjects_( 0 ),
+	Guessing_( BcFalse ),
+	SetWin_( BcFalse ),
+	SetLose_( BcFalse ),
 	FontMaterial_( nullptr ),
 	Font_( nullptr ),
-	FontComponent_( nullptr )
+	FontComponent_( nullptr ),
+	Music_( nullptr )
 {
 
 }
@@ -223,9 +234,15 @@ GaGameComponent::~GaGameComponent()
 //////////////////////////////////////////////////////////////////////////
 // onAttach
 //virtual
+static BcTimer Timer;
 void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 {
 	Super::onAttach( Parent );
+
+	auto Emitter = getParentEntity()->getComponentAnyParentByType< ScnSoundEmitterComponent >();
+
+	Emitter->play( Music_ );
+
 
 	Canvas_ = getParentEntity()->getComponentAnyParentByType< ScnCanvasComponent >();
 	//0x845efad7 4,4 - Solvable puzzle.
@@ -235,13 +252,8 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 	int totalHours = 4;
 	int totalPeople = 4;
 
-#if PSY_PRODUCTION
-	static BcTimer Timer;
-	Seed = Timer.time();
-
-#endif
+	Seed = Timer.time() * 100000.0f;
 	
-#if 0
 	// Randomise our room list.
 	srand( Seed );
 	for( int Idx = 0; Idx < Rooms_.size(); ++Idx )
@@ -249,7 +261,6 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 		auto TargetIdx = rand() % Rooms_.size();
 		std::swap( Rooms_[ Idx ], Rooms_[ TargetIdx ] );
 	}
-#endif
 
 	// Randomise our character list.
 	for( int Idx = 0; Idx < Characters_.size(); ++Idx )
@@ -306,7 +317,7 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 		WorldGen::Person* person = gen.People_.GetItem( Idx );
 		GaGameObject obj;
 
-		int RoomId = Idx % gen.Rooms_.Size();
+		int RoomId = Idx;// % gen.Rooms_.Size();
 		sprintf(buffer, "PERSON_%d", person->Id_);
 		obj.Object_ = buffer;
 		obj.Infos_.push_back( buffer );
@@ -401,6 +412,15 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 		{
 			const auto& Event = InEvent.get< GaActionEvent >();
 			
+			// If a door event, spawn room.
+			if( Event.SourceType_ == "RESET_GAME" ||
+				Event.Target_ == "RESET_GAME" )
+			{
+				ScnCore::pImpl()->removeEntity( getParentEntity() );
+
+				exit(0);
+			}
+
 			// No modal dialog, then don't handle events.
 			if( ModalDialogEntity_ == nullptr )
 			{
@@ -473,11 +493,70 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 			}
 			else
 			{
+				
 				if( Event.SourceType_ == "CLOSE" ||
 					Event.Target_ == "CLOSE" )
 				{
 					ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
 					ModalDialogEntity_ = nullptr;
+
+					if( SetWin_ )
+					{
+						std::vector< GaModalOptionGroup > OptionGroups = 
+						{
+							GaModalOptionGroup( "MODAL", "Thanks to your excellent detective skills we\nhave put away the murder!",
+								{
+									GaModalOption( "NEXT", "Just doin' my job." ),
+									GaModalOption( "NEXT", "Elementry!" ),
+									GaModalOption( "NEXT", "Justice served!" )
+								} ),
+							GaModalOptionGroup( "MODAL", "Thank you. Others may be in need of your service.",
+								{
+									GaModalOption( "RESET_GAME", "On my way!" )
+								} ),
+						};
+
+						spawnModal( "MODAL", OptionGroups );
+					}
+					else if( SetLose_ )
+					{
+						std::vector< GaModalOptionGroup > OptionGroups = 
+						{
+							GaModalOptionGroup( "MODAL", "It turns out the evidence was not sufficient to convict!\nAlas, another criminal walks free again.\nThanks for nothing.",
+								{
+									GaModalOption( "NEXT", "I'm sorry." ),
+									GaModalOption( "NEXT", "Oh well." ),
+									GaModalOption( "NEXT", "I suck :(" ),
+									GaModalOption( "NEXT", "I'm such a loser!" )
+								} ),
+
+							GaModalOptionGroup( "MODAL", "I know. Please don't let down the next person or you may\nend up a victim some day!",
+								{
+									GaModalOption( "NEXT", "Is that a threat?" ),
+									GaModalOption( "RESET_GAME", "I hope not." ),
+									GaModalOption( "RESET_GAME", "We'll see.." )
+
+								} ),
+
+							GaModalOptionGroup( "MODAL", "Don't hang around to find out.",
+								{
+									GaModalOption( "NEXT", "See you around." )
+								} ),
+
+							GaModalOptionGroup( "MODAL", "Don't trip on the way out.",
+								{
+									GaModalOption( "RESET_GAME", "I won't." ),
+									GaModalOption( "NEXT", "*trip*" )
+								} ),
+
+							GaModalOptionGroup( "MODAL", "HAHAHAHAHAHAHAHAHAHA!!!!!",
+								{
+									GaModalOption( "RESET_GAME", ":(" )
+								} ),
+						};
+
+						spawnModal( "MODAL", OptionGroups );
+					}
 				}
 
 				if( Event.SourceType_ == "SELECTION" )
@@ -486,8 +565,9 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 					{
 						AttemptedSolutionObjects_ = 0;
 						CorrectSolutionObjects_ = 0;
+						Guessing_ = BcTrue;
 					}
-					else
+					else if( Guessing_ )
 					{
 						// Test for solution.
 						auto SolutionIt = std::find_if( Solution_.begin(), Solution_.end(),
@@ -509,11 +589,15 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 						{
 							if( CorrectSolutionObjects_ == AttemptedSolutionObjects_ )
 							{
+								Guessing_ = BcFalse;
 								PSY_LOG( "WIN CONDITION!" );
+								SetWin_ = BcTrue;
 							}
 							else
 							{
+								Guessing_ = BcFalse;
 								PSY_LOG( "LOSE CONDITION!" );
+								SetLose_ = BcTrue;
 							}
 						}
 					}

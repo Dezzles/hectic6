@@ -2,7 +2,7 @@
 
 	"resources" : [
 		{
-			"name"		:		"Sound",
+			"name"		:		"music",
 			"type"		:		"ScnSound",
 			"source"	:		"Content/Sound/HecticMurderParty.ogg",
 			"isstream"	:		true,

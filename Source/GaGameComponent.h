@@ -119,6 +119,8 @@ private:
 	GameState GameState_;
 	ScnEntityRef CurrentRoomEntity_;
 	ScnEntityRef ModalDialogEntity_;
+
+	class ScnSound* Music_;
 	
 	std::vector< GaRoomObject > Rooms_;
 	std::vector< GaCharacterObject > Characters_;
@@ -130,8 +132,13 @@ private:
 	std::vector< GaSolutionObject > Solution_;
 	BcU32 AttemptedSolutionObjects_;
 	BcU32 CorrectSolutionObjects_;
+	BcBool Guessing_;
+	BcBool SetWin_;
+	BcBool SetLose_;
+
 	std::vector< std::string > CharacterNames_;
 
+	
 	std::map< std::string, std::string > IDTextMapping_;
 
 	class ScnMaterialComponent* FontMaterial_;

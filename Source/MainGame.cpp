@@ -45,7 +45,7 @@ void PsyLaunchGame()
 {
 	ScnEntitySpawnParams ScreenEntityParams = 
 	{
-		"MenuEntity_0", "default", "MenuEntity",
+		"GameEntity_0", "game", "GameEntity",
 		MaMat4d(),
 		nullptr
 	};

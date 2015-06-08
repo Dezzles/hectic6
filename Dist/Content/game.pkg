@@ -23,13 +23,20 @@
 				},
 
 				{
+					"$Class" : "ScnSoundEmitterComponent",
+					"type" : "ScnSoundEmitterComponent"
+				},
+
+				{
 					"$Class" : "GaGameComponent",
 					"type" : "GaGameComponent",
+
+					"music" : "$(ScnSound:sound.music)",
 
 					"fontmaterial" : "$(ScnMaterial:fonts.font_material)",
 					"font" : "$(ScnFont:fonts.courier)",
 
-					"room" : "ROOM_0",
+					"room" : "ROOM_LOBBY",
 					
 					"characternames" : [
 						"Alice",
@@ -202,14 +209,14 @@
 						{
 							"type" : "PERSON",
 							"name" : "PERSON_",
-							"missingmessage" : "You need to go interview people to work out who the prime suspect is.",
+							"missingmessage" : "Something terrible has happened!\nA murder has occurred.\nYou need to go interview people to work out who the\nprime suspect is so we can try put them away!",
 							"question" : "So who do you think is responsible?"
 						},
 
 						{
 							"type" : "TIME",
 							"name" : "TIME_",
-							"missingmessage" : "You need to look in other rooms and talk to people.",
+							"missingmessage" : "Something terrible has happened!\nA murder has occurred.\nYou need to go interview people to work out who the\nprime suspect is so we can try put them away!",
 							"question" : "When do you think they done it?"
 						}
 					]
@@ -590,7 +597,7 @@
 						},
 
 						{
-							"position" : "250.0, 300.0",
+							"position" : "350.0, 300.0",
 							"scale" : "0.2, 0.2",
 							"texture" : "$(ScnTexture:textures.prop1)"
 						},

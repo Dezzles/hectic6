@@ -37,65 +37,7 @@
 						{
 							"name" : "Launch Game",
 							"entity" : "$(ScnEntity:game.GameEntity)"
-						},
-
-						{
-							"name" : "Neilo Test",
-							"entity" : "$(ScnEntity:neilo_test.GameEntity)"
 						}
-
-
-						/*
-						{ 
-							"name" : "Animation test",
-							"entity" : "$(ScnEntity:animation_test.TestEntity)"
-						},
-
-						{ 
-							"name" : "Render target test",
-							"entity" : "$(ScnEntity:render_target_test.TestEntity)"
-						},
-
-						{ 
-							"name" : "Shader test",
-							"entity" : "$(ScnEntity:shader_test.TestEntity)"
-						},
-
-						{ 
-							"name" : "Model test",
-							"entity" : "$(ScnEntity:model_test.TestEntity)"
-						},
-
-						{ 
-							"name" : "Particle test",
-							"entity" : "$(ScnEntity:particle_test.TestEntity)"
-						},
-
-						{ 
-							"name" : "Font test",
-							"entity" : "$(ScnEntity:font_test.TestEntity)"
-						},
-
-						{ 
-							"name" : "Physics test",
-							"entity" : "$(ScnEntity:physics_test.TestEntity)"
-						},
-
-						{ 
-							"name" : "Network test",
-							"entity" : "$(ScnEntity:network_test.TestEntity)"
-						},
-
-						{
-							"name" : "Sound test",
-							"entity" : "$(ScnEntity:sound_test.TestEntity)"
-						},
-
-						{
-							"name" : "Sprite test",
-							"entity" : "$(ScnEntity:sprite_test.TestEntity)"
-						}
-						*/
 					]
 				}
 			]

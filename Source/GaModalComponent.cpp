@@ -77,12 +77,15 @@ void GaModalComponent::StaticRegisterClass()
 					{
 						for( auto InComponent : Components )
 						{
+#if 0
 							ImGui::Begin( "Modals" );
+#endif
 							GaModalComponentRef Component( InComponent );
 
 							if( Component->CurrentOptionGroup_ < Component->OptionGroups_.size() )
 							{
 								const auto& OptionGroup = Component->OptionGroups_[ Component->CurrentOptionGroup_ ];
+#if 0
 								ImGui::Text( OptionGroup.Text_.c_str() );
 
 								bool Clicked = false;
@@ -101,7 +104,6 @@ void GaModalComponent::StaticRegisterClass()
 
 									ImGui::SameLine();
 								}
-
 								if( Clicked )
 								{
 									Component->CurrentOptionGroup_++;
@@ -112,6 +114,7 @@ void GaModalComponent::StaticRegisterClass()
 										InComponent->getParentEntity()->publish( gaEVT_FLOW_ACTION, Event, BcFalse );
 									}
 								}
+#endif
 
 								// Draw!
 								if( Component->MaterialComponent_ )
@@ -130,7 +133,8 @@ void GaModalComponent::StaticRegisterClass()
 										.setAlignment( ScnFontAlignment::HCENTRE | ScnFontAlignment::VCENTRE )
 										.setLayer( 101 )
 										.setTextColour( RsColour::BLACK )
-										.setSize( 24.0f );
+										.setSize( 24.0f )
+										.setTextSettings( MaVec4d( 0.40f, 0.45f, -1.0f, -1.0f ) );
 
 									Pos -= Size * 0.5f;
 
@@ -172,7 +176,9 @@ void GaModalComponent::StaticRegisterClass()
 								}
 							}
 							Component->HadClick_ = BcFalse;
+#if 0
 							ImGui::End();
+#endif
 						}
 					} ),
 			} ) );
