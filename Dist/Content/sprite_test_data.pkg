@@ -50,7 +50,7 @@
 		},
 
 		{
-			"type" : "ScnTextureAtlas",
+			"type" : "ScnTexture",
 			"name" : "spritesheet_texture",
 
 			"tileatlas"	: true,

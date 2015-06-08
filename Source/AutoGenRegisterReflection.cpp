@@ -59,7 +59,6 @@
 #include "System/Scene/Rendering/ScnShaderFileData.h"
 #include "System/Scene/Rendering/ScnSpriteComponent.h"
 #include "System/Scene/Rendering/ScnTexture.h"
-#include "System/Scene/Rendering/ScnTextureAtlas.h"
 #include "System/Scene/Rendering/ScnTileMap.h"
 #include "System/Scene/Rendering/ScnViewComponent.h"
 #include "System/Scene/ScnComponent.h"
@@ -178,7 +177,6 @@ void AutoGenRegisterReflection()
 	ScnSpriteAnimation::StaticRegisterClass();
 	ScnSpriteComponent::StaticRegisterClass();
 	ScnTexture::StaticRegisterClass();
-	ScnTextureAtlas::StaticRegisterClass();
 	ScnTileMap::StaticRegisterClass();
 	ScnTileMapComponent::StaticRegisterClass();
 	ScnViewComponent::StaticRegisterClass();

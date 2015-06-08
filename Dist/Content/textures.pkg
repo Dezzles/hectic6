@@ -9,7 +9,7 @@
 		},
 
 		{
-			"type"			: "ScnTextureAtlas",
+			"type"			: "ScnTexture",
 			"name"			: "particles",
 
 			"source"		: [
