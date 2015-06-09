@@ -104,7 +104,9 @@ public:
 
 	GaGameObject* findObject( const BcName& ObjectName );
 
-
+	void onDoorEvent( const GaActionEvent& Event );
+	void onPersonEvent( const GaActionEvent& Event );
+	void onButlerEvent( const GaActionEvent& Event );
 
 private:
 	class ScnCanvasComponent* Canvas_;
@@ -112,6 +114,8 @@ private:
 	enum class GameState
 	{
 		IDLE,
+		IN_MODAL_OBJECT,
+		IN_MODAL_BUTLER,
 		TRANSITION_OUT,
 		TRANSITION_IN
 	};

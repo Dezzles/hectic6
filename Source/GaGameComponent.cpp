@@ -421,187 +421,161 @@ void GaGameComponent::onAttach( ScnEntityWeakRef Parent )
 				exit(0);
 			}
 
-			// No modal dialog, then don't handle events.
-			if( ModalDialogEntity_ == nullptr )
+
+			switch( GameState_ )
 			{
-				// If a door event, spawn room.
-				if( Event.SourceType_ == "DOOR" )
+			case GameState::IDLE:
 				{
-					useObject( Event.SourceName_ );
-					spawnRoom( Event.Target_ );
-				}
-
-				// If a person event, spawn a modal.
-				if( Event.SourceType_ == "PERSON" )
-				{
-					useObject( Event.Target_ );
-					spawnModal( "MODAL", Event.Target_ );
-				}
-
-				// If a person event, spawn a modal.
-				if( Event.SourceType_ == "BUTLER" )
-				{
-					std::vector< GaModalOptionGroup > OptionGroups = 
+					// If a door event, spawn room.
+					if( Event.SourceType_ == "DOOR" )
 					{
-						GaModalOptionGroup( "MODAL", "Do you think you've solved it?",
-							{
-								GaModalOption( "RESET_ATTEMPTS", "Yes!" ),
-								GaModalOption( "CLOSE", "No" )
-							} ),
-					};
+						onDoorEvent( Event );
+					}
 
-					// Reset correct.
-					AttemptedSolutionObjects_ = 0;
-					CorrectSolutionObjects_ = 0;
-
-					//
-					for( const auto& SolutionObject : Solution_ )
+					// If a person event, spawn a modal.
+					if( Event.SourceType_ == "PERSON" )
 					{
-						bool HaveSolutionObject = false;
+						onPersonEvent( Event );
+					}
 
-						auto ModalOption = GaModalOptionGroup( "MODAL", SolutionObject.Question_, {} );
+					// If a person event, spawn a modal.
+					if( Event.SourceType_ == "BUTLER" )
+					{
+						onButlerEvent( Event );
+					}
+				}
+				break;
+			case GameState::IN_MODAL_OBJECT:
+				{
+					if( Event.SourceType_ == "CLOSE" ||
+						Event.Target_ == "CLOSE" )
+					{
+						ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
+						ModalDialogEntity_ = nullptr;
+						GameState_ = GameState::IDLE;
+					}
+				}
+				break;
+			case GameState::IN_MODAL_BUTLER:
+				{
+					if( Event.SourceType_ == "CLOSE" ||
+						Event.Target_ == "CLOSE" )
+					{
+						ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
+						ModalDialogEntity_ = nullptr;
 
-						for( const std::string& Info : Infos_ )
+						if( SetWin_ )
 						{
-							if( Info.substr( 0, SolutionObject.Type_.size() ) == SolutionObject.Type_ )
+							std::vector< GaModalOptionGroup > OptionGroups = 
 							{
-								HaveSolutionObject = true;
+								GaModalOptionGroup( "MODAL", "Thanks to your excellent detective skills we\nhave put away the murder!",
+									{
+										GaModalOption( "NEXT", "Just doin' my job." ),
+										GaModalOption( "NEXT", "Elementry!" ),
+										GaModalOption( "NEXT", "Justice served!" )
+									} ),
+								GaModalOptionGroup( "MODAL", "Thank you. Others may be in need of your service.",
+									{
+										GaModalOption( "RESET_GAME", "On my way!" )
+									} ),
+							};
 
-								ModalOption.Options_.emplace_back( 
-									GaModalOption( Info, IDTextMapping_[ Info ] ) );
-							}
+							spawnModal( "MODAL", OptionGroups );
 						}
-						
-						if( HaveSolutionObject == false )
+						else if( SetLose_ )
 						{
-							OptionGroups.clear();
-							OptionGroups.emplace_back( 
-								GaModalOptionGroup( "MODAL", SolutionObject.MissingMessage_,
-								{
-									GaModalOption( "CLOSE", "Ok." ),
-								} ) );
+							std::vector< GaModalOptionGroup > OptionGroups = 
+							{
+								GaModalOptionGroup( "MODAL", "It turns out the evidence was not sufficient to convict!\nAlas, another criminal walks free again.\nThanks for nothing.",
+									{
+										GaModalOption( "NEXT", "I'm sorry." ),
+										GaModalOption( "NEXT", "Oh well." ),
+										GaModalOption( "NEXT", "I suck :(" ),
+										GaModalOption( "NEXT", "I'm such a loser!" )
+									} ),
+
+								GaModalOptionGroup( "MODAL", "I know. Please don't let down the next person or you may\nend up a victim some day!",
+									{
+										GaModalOption( "NEXT", "Is that a threat?" ),
+										GaModalOption( "RESET_GAME", "I hope not." ),
+										GaModalOption( "RESET_GAME", "We'll see.." )
+
+									} ),
+
+								GaModalOptionGroup( "MODAL", "Don't hang around to find out.",
+									{
+										GaModalOption( "NEXT", "See you around." )
+									} ),
+
+								GaModalOptionGroup( "MODAL", "Don't trip on the way out.",
+									{
+										GaModalOption( "RESET_GAME", "I won't." ),
+										GaModalOption( "NEXT", "*trip*" )
+									} ),
+
+								GaModalOptionGroup( "MODAL", "HAHAHAHAHAHAHAHAHAHA!!!!!",
+									{
+										GaModalOption( "RESET_GAME", ":(" )
+									} ),
+							};
+
+							spawnModal( "MODAL", OptionGroups );
 						}
 						else
 						{
-							OptionGroups.emplace_back( ModalOption );
+							GameState_ = GameState::IDLE;
 						}
 					}
 
-					useObject( Event.SourceName_ );
-					spawnModal( "MODAL", OptionGroups );
-				}
-			}
-			else
-			{
-				
-				if( Event.SourceType_ == "CLOSE" ||
-					Event.Target_ == "CLOSE" )
-				{
-					ScnCore::pImpl()->removeEntity( ModalDialogEntity_ );
-					ModalDialogEntity_ = nullptr;
-
-					if( SetWin_ )
+					if( Event.SourceType_ == "SELECTION" )
 					{
-						std::vector< GaModalOptionGroup > OptionGroups = 
+						if( Event.Target_ == "RESET_ATTEMPTS" )
 						{
-							GaModalOptionGroup( "MODAL", "Thanks to your excellent detective skills we\nhave put away the murder!",
-								{
-									GaModalOption( "NEXT", "Just doin' my job." ),
-									GaModalOption( "NEXT", "Elementry!" ),
-									GaModalOption( "NEXT", "Justice served!" )
-								} ),
-							GaModalOptionGroup( "MODAL", "Thank you. Others may be in need of your service.",
-								{
-									GaModalOption( "RESET_GAME", "On my way!" )
-								} ),
-						};
-
-						spawnModal( "MODAL", OptionGroups );
-					}
-					else if( SetLose_ )
-					{
-						std::vector< GaModalOptionGroup > OptionGroups = 
+							AttemptedSolutionObjects_ = 0;
+							CorrectSolutionObjects_ = 0;
+							Guessing_ = BcTrue;
+						}
+						else if( Guessing_ )
 						{
-							GaModalOptionGroup( "MODAL", "It turns out the evidence was not sufficient to convict!\nAlas, another criminal walks free again.\nThanks for nothing.",
+							// Test for solution.
+							auto SolutionIt = std::find_if( Solution_.begin(), Solution_.end(),
+								[ this, &Event ]( const GaSolutionObject& Solution )
 								{
-									GaModalOption( "NEXT", "I'm sorry." ),
-									GaModalOption( "NEXT", "Oh well." ),
-									GaModalOption( "NEXT", "I suck :(" ),
-									GaModalOption( "NEXT", "I'm such a loser!" )
-								} ),
-
-							GaModalOptionGroup( "MODAL", "I know. Please don't let down the next person or you may\nend up a victim some day!",
-								{
-									GaModalOption( "NEXT", "Is that a threat?" ),
-									GaModalOption( "RESET_GAME", "I hope not." ),
-									GaModalOption( "RESET_GAME", "We'll see.." )
-
-								} ),
-
-							GaModalOptionGroup( "MODAL", "Don't hang around to find out.",
-								{
-									GaModalOption( "NEXT", "See you around." )
-								} ),
-
-							GaModalOptionGroup( "MODAL", "Don't trip on the way out.",
-								{
-									GaModalOption( "RESET_GAME", "I won't." ),
-									GaModalOption( "NEXT", "*trip*" )
-								} ),
-
-							GaModalOptionGroup( "MODAL", "HAHAHAHAHAHAHAHAHAHA!!!!!",
-								{
-									GaModalOption( "RESET_GAME", ":(" )
-								} ),
-						};
-
-						spawnModal( "MODAL", OptionGroups );
-					}
-				}
-
-				if( Event.SourceType_ == "SELECTION" )
-				{
-					if( Event.Target_ == "RESET_ATTEMPTS" )
-					{
-						AttemptedSolutionObjects_ = 0;
-						CorrectSolutionObjects_ = 0;
-						Guessing_ = BcTrue;
-					}
-					else if( Guessing_ )
-					{
-						// Test for solution.
-						auto SolutionIt = std::find_if( Solution_.begin(), Solution_.end(),
-							[ this, &Event ]( const GaSolutionObject& Solution )
+									if( Event.Target_ == Solution.Name_ )
+									{
+										return true;
+									}
+									return false;
+								} );
+							AttemptedSolutionObjects_++;
+							if( SolutionIt != Solution_.end() )
 							{
-								if( Event.Target_ == Solution.Name_ )
+								CorrectSolutionObjects_++;
+							}
+
+							if( AttemptedSolutionObjects_ == Solution_.size() )
+							{
+								if( CorrectSolutionObjects_ == AttemptedSolutionObjects_ )
 								{
-									return true;
+									Guessing_ = BcFalse;
+									PSY_LOG( "WIN CONDITION!" );
+									SetWin_ = BcTrue;
 								}
-								return false;
-							} );
-						AttemptedSolutionObjects_++;
-						if( SolutionIt != Solution_.end() )
-						{
-							CorrectSolutionObjects_++;
-						}
-
-						if( AttemptedSolutionObjects_ == Solution_.size() )
-						{
-							if( CorrectSolutionObjects_ == AttemptedSolutionObjects_ )
-							{
-								Guessing_ = BcFalse;
-								PSY_LOG( "WIN CONDITION!" );
-								SetWin_ = BcTrue;
-							}
-							else
-							{
-								Guessing_ = BcFalse;
-								PSY_LOG( "LOSE CONDITION!" );
-								SetLose_ = BcTrue;
+								else
+								{
+									Guessing_ = BcFalse;
+									PSY_LOG( "LOSE CONDITION!" );
+									SetLose_ = BcTrue;
+								}
 							}
 						}
 					}
 				}
+				break;
+			case GameState::TRANSITION_OUT:
+				break;
+			case GameState::TRANSITION_IN:
+				break;
 			}
 
 			return evtRET_PASS;
@@ -850,4 +824,80 @@ GaGameObject* GaGameComponent::findObject( const BcName& ObjectName )
 	}
 
 	return nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// onDoorEvent
+void GaGameComponent::onDoorEvent( const GaActionEvent& Event )
+{
+	useObject( Event.SourceName_ );
+	spawnRoom( Event.Target_ );
+
+	GameState_ = GameState::IDLE;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// onPersonEvent
+void GaGameComponent::onPersonEvent( const GaActionEvent& Event )
+{
+	useObject( Event.Target_ );
+	spawnModal( "MODAL", Event.Target_ );
+
+	GameState_ = GameState::IN_MODAL_OBJECT;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// onButlerEvent
+void GaGameComponent::onButlerEvent( const GaActionEvent& Event )
+{
+	std::vector< GaModalOptionGroup > OptionGroups = 
+	{
+		GaModalOptionGroup( "MODAL", "Do you think you've solved it?",
+			{
+				GaModalOption( "RESET_ATTEMPTS", "Yes!" ),
+				GaModalOption( "CLOSE", "No" )
+			} ),
+	};
+
+	// Reset correct.
+	AttemptedSolutionObjects_ = 0;
+	CorrectSolutionObjects_ = 0;
+
+	// Setup the option dialogs for the butler.
+	for( const auto& SolutionObject : Solution_ )
+	{
+		bool HaveSolutionObject = false;
+
+		auto ModalOption = GaModalOptionGroup( "MODAL", SolutionObject.Question_, {} );
+
+		for( const std::string& Info : Infos_ )
+		{
+			if( Info.substr( 0, SolutionObject.Type_.size() ) == SolutionObject.Type_ )
+			{
+				HaveSolutionObject = true;
+
+				ModalOption.Options_.emplace_back( 
+					GaModalOption( Info, IDTextMapping_[ Info ] ) );
+			}
+		}
+		
+		if( HaveSolutionObject == false )
+		{
+			OptionGroups.clear();
+			OptionGroups.emplace_back( 
+				GaModalOptionGroup( "MODAL", SolutionObject.MissingMessage_,
+				{
+					GaModalOption( "CLOSE", "Ok." ),
+				} ) );
+		}
+		else
+		{
+			OptionGroups.emplace_back( ModalOption );
+		}
+	}
+
+	useObject( Event.SourceName_ );
+	spawnModal( "MODAL", OptionGroups );
+
+	GameState_ = GameState::IN_MODAL_BUTLER;
 }
