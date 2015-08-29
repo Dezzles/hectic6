@@ -19,6 +19,7 @@ namespace WorldGen
 		Murder Murder_;
 	private:
 		Mapper Mapper_;
+		int Seed_;
 	};
 
 

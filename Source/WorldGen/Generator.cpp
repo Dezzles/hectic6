@@ -4,7 +4,7 @@
 #include "cpplinq.hpp"
 
 WorldGen::Generator::Generator( int People, int Hours, int Seed )
-	:Mapper_(People, Hours, Seed), Murder_( 0 )
+	:Mapper_(People, Hours, Seed), Murder_(0), Seed_(Seed)
 {
 
 	Mapper_.NormaliseRooms();
@@ -94,7 +94,7 @@ void WorldGen::Generator::Print()
 {
 	Mapper_.Print();
 	printf( "\n" );
-
+	printf("Seed: %d\n", Seed_);
 	for ( int Idx = 0; Idx < Rooms_.Size(); ++Idx )
 	{
 		printf( "%s\n", Rooms_.GetItem( Idx )->ToString().c_str() );
