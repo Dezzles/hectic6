@@ -269,3 +269,40 @@ WorldGen::Mapper::Pair WorldGen::Mapper::GetMurder()
 	}
 	return Pair( UNUSED, UNUSED );
 }
+
+int WorldGen::Mapper::GetNewRoomId()
+{
+	int u = 0;
+	std::vector<int> RoomIds;
+	for ( int Idx1 = 0; Idx1 < Width_; ++Idx1 )
+	{
+		for ( int Idx2 = 0; Idx2 < Height_; ++Idx2 )
+		{
+			for ( int Idx3 = 0; Idx3 < RoomIds.size(); ++Idx3 )
+			{
+				if ( RoomIds[ Idx3 ] == Data[ Idx1 ][ Idx2 ] )
+				{
+					break;
+				}
+				RoomIds.push_back(Data[ Idx1 ][ Idx2 ]);
+			}
+		}
+	}
+	bool found = false;
+	while ( !found )
+	{
+		found = true;
+		for ( int Idx3 = 0; Idx3 < RoomIds.size(); ++Idx3 )
+		{
+			if ( RoomIds[ Idx3 ] == u )
+			{
+				++u;
+				found = false;
+				break;
+			}
+		}
+
+	}
+
+	return u;
+}

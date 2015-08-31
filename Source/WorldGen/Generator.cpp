@@ -8,11 +8,22 @@ WorldGen::Generator::Generator( int People, int Hours, int Seed )
 {
 
 	Mapper_.NormaliseRooms();
-	Mapper_.Print();
+	//Mapper_.Print();
 	printf( "\n" );
 	int GuiltyX = -1;
 	int GuiltyY = -1;
 	int NormalRoomId = 0;
+
+	Mapper::Pair murderLocation = Mapper_.GetMurder();
+	Murder_.PersonId_ = murderLocation.X_;
+	Murder_.TimeId_ = murderLocation.Y_;
+	Murder_.RoomId_ = Mapper_.GetRoomIdNotInRow( murderLocation.Y_ );
+	if ( Murder_.RoomId_ == -1 ){
+		Murder_.RoomId_ = Mapper_.GetNewRoomId();
+	}
+
+	Mapper_.Data[ murderLocation.X_ ][ murderLocation.Y_ ] = Murder_.RoomId_;
+
 
 	for ( int Idx1 = 0; Idx1 < Mapper_.Width_; ++Idx1 )
 	{
@@ -46,12 +57,6 @@ WorldGen::Generator::Generator( int People, int Hours, int Seed )
 	}
 
 
-	Mapper::Pair murderLocation = Mapper_.GetMurder();
-	Murder_.PersonId_ = murderLocation.X_;
-	Murder_.TimeId_ = murderLocation.Y_;
-	Murder_.RoomId_ = Mapper_.GetRoomIdNotInRow( murderLocation.Y_ );
-
-	Mapper_.Data[ murderLocation.X_ ][ murderLocation.Y_ ] = Murder_.RoomId_;
 
 
 	for ( int PersonIdx = 0; PersonIdx < Mapper_.Width_; ++PersonIdx )
@@ -94,12 +99,12 @@ void WorldGen::Generator::Print()
 {
 	Mapper_.Print();
 	printf( "\n" );
-	printf("Seed: %d\n", Seed_);
+	printf( "Seed: %d\n", Seed_ );
 	for ( int Idx = 0; Idx < Rooms_.Size(); ++Idx )
 	{
 		printf( "%s\n", Rooms_.GetItem( Idx )->ToString().c_str() );
 	}
-	printf("\n");
+	printf( "\n" );
 
 	for ( int Idx = 0; Idx < People_.Size(); ++Idx )
 	{
@@ -122,29 +127,45 @@ void WorldGen::Generator::Print()
 
 	using namespace cpplinq;
 
-	auto c = from_iterators(Information_.Internal().begin(), Information_.Internal().end())
-		>> where( [ ]( Information* const & c ) { return c->PersonId_ == 0; } )
-		>> orderby( [ ]( Information* const & c ) {return c->RoomId_; }, true )
-		>> to_vector();
-	
-	for ( int Idx = 0; Idx < c.size(); ++Idx )
-	{
-		Information* info = c[ Idx ];
-		printf( "\t%d\t%d\t%d\t%d\t%d\n", info->Id_, info->RoomId_, info->PersonId_, info->StartTimeId_, info->EndTimeId_ );
-	}
-
-	printf( "\n" );
-
-	printf("Murderer: \t%d\nRoom: \t\t%d\nTime:\t\t%d\n", Murder_.PersonId_, Murder_.RoomId_, Murder_.TimeId_);
+	printf( "Murderer: \t%d\nRoom: \t\t%d\nTime:\t\t%d\n", Murder_.PersonId_, Murder_.RoomId_, Murder_.TimeId_ );
 
 	printf( "\n" );
 	for ( int Idx1 = 0; Idx1 < People_.Size(); ++Idx1 )
 	{
 		Person* p = People_.GetItem( Idx1 );
-		printf("Person %c\n", p->Id_ + 'A');
+		printf( "Person %c\n", p->Id_ + 'A' );
 		for ( int Idx2 = 0; Idx2 < p->Information_.size(); ++Idx2 )
 		{
-			printf("\t%c\t%c\t%d-%d\n", p->Information_[ Idx2 ]->RoomId_ + 'Q', p->Information_[Idx2]->TargetId_ + 'A',
+			printf( "\t%c\t%c\t%d-%d\n", p->Information_[ Idx2 ]->RoomId_ + 'Q', p->Information_[ Idx2 ]->TargetId_ + 'A',
+				p->Information_[ Idx2 ]->StartTimeId_ + 13, p->Information_[ Idx2 ]->EndTimeId_ + 13 );
+		}
+
+		printf( "\n" );
+	}
+}
+
+void WorldGen::Generator::ShortPrint()
+{
+	printf( "\n" );
+	printf( "Seed: %d\n", Seed_ );
+
+	using namespace cpplinq;
+
+	auto c = from_iterators( Information_.Internal().begin(), Information_.Internal().end() )
+		>> where( [ ]( Information* const & c ) { return c->PersonId_ == 0; } )
+		>> orderby( [ ]( Information* const & c ) {return c->RoomId_; }, true )
+		>> to_vector();
+
+	printf( "Murderer: \t%d\nRoom: \t\t%d\nTime:\t\t%d\n", Murder_.PersonId_, Murder_.RoomId_, Murder_.TimeId_ );
+
+	printf( "\n" );
+	for ( int Idx1 = 0; Idx1 < People_.Size(); ++Idx1 )
+	{
+		Person* p = People_.GetItem( Idx1 );
+		printf( "Person %c\n", p->Id_ + 'A' );
+		for ( int Idx2 = 0; Idx2 < p->Information_.size(); ++Idx2 )
+		{
+			printf( "\t%c\t%c\t%d-%d\n", p->Information_[ Idx2 ]->RoomId_ + 'Q', p->Information_[ Idx2 ]->TargetId_ + 'A',
 				p->Information_[ Idx2 ]->StartTimeId_ + 13, p->Information_[ Idx2 ]->EndTimeId_ + 13 );
 		}
 

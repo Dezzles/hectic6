@@ -16,6 +16,7 @@ namespace WorldGen
 		void ReplaceRoom( int RoomId, int NewId );
 		bool IdInOtherRow( int RoomId, int CurrentRow );
 		int GetRoomIdNotInRow( int CurrentRow );
+		int GetNewRoomId();
 
 		void SetLocation( int X, int Y, int Val );
 		int GetLocation( int X, int Y );

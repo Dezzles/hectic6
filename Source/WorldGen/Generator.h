@@ -10,6 +10,7 @@ namespace WorldGen
 		Generator( int People, int Hours, int Seed );
 		void GenerateClues();
 		void Print();
+		void ShortPrint();
 
 		Wrapper<Room> Rooms_;
 		Wrapper<Person> People_;
