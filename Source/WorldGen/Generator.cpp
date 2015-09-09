@@ -221,5 +221,36 @@ void WorldGen::Generator::GenerateClues()
 		data->RoomId_ = infoA->RoomId_;
 		People_.GetItemById( data->PersonId_ )->Information_.push_back( data );
 	}
+	
+	for ( int Counter = 0; Counter < 3; ++Counter )
+	{
+		for ( int Idx = 0; Idx < PlayerInfo_.Size(); ++Idx )
+		{
+			InfoForPlayer* data = PlayerInfo_.GetItem(Idx);
+			int personACount = People_.GetItemById( data->PersonId_ )->Information_.size();
+			int personBCount = People_.GetItemById( data->TargetId_ )->Information_.size();
+
+			if ( personACount > personBCount + 1 )
+			{
+				Person* pA = People_.GetItemById(data->PersonId_);
+				Person* pB = People_.GetItemById(data->TargetId_);
+
+				int t = data->PersonId_;
+				data->PersonId_ = data->TargetId_;
+				data->TargetId_ = t;
+
+				pB->Information_.push_back(data);
+				for ( auto iter = pA->Information_.begin(); iter != pA->Information_.end(); ++iter )
+				{
+					if ( *iter == data )
+					{
+						pA->Information_.erase( iter );
+						break;
+					}
+				}
+					
+			}
+		}
+	}/**/
 
 }

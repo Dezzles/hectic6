@@ -8,8 +8,12 @@ int main(int argc, char ** argv)
 		int r = atoi(argv[1]);
 		WorldGen::Generator generator( 5, 4, r );
 		printf( "Seed: %d\n", r );
-		// generator.Print();
-		generator.Print();
+		if ( argc > 2 && ( argv[ 2 ][ 0 ] == 's' ) )
+			generator.ShortPrint();
+		else
+		{
+			generator.Print();
+		}
 		return 0;
 	}
 	srand(time(0));
