@@ -1,10 +1,14 @@
 #pragma once
 namespace WorldGen
 {
-	class Generator;
+	class BaseGenerator;
+	class GeneratorPeopleRooms;
+	class GeneratorPeopleRoomsItems;
 	class Mapper
 	{
-		friend Generator;
+		friend BaseGenerator;
+		friend GeneratorPeopleRooms;
+		friend GeneratorPeopleRoomsItems;
 		struct Pair;
 	public:
 		Mapper( int Width, int Height, int Seed );

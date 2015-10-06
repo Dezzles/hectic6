@@ -1,12 +1,13 @@
 #include "Mapper.h"
 #include <time.h>
-#include "Generator.h"
+#include "GeneratorPeopleRooms.h"
+#include "GeneratorPeopleRoomsItems.h"
 int main(int argc, char ** argv)
 {
 	if ( argc > 1 )
 	{
 		int r = atoi(argv[1]);
-		WorldGen::Generator generator( 5, 4, r );
+		WorldGen::GeneratorPeopleRoomsItems generator( 5, 4, r );
 		printf( "Seed: %d\n", r );
 		if ( argc > 2 && ( argv[ 2 ][ 0 ] == 's' ) )
 			generator.ShortPrint();
@@ -20,7 +21,7 @@ int main(int argc, char ** argv)
 	for ( int i = 0; i < 20; ++i )
 	{
 		int r = rand();
-		WorldGen::Generator generator( 5, 4, r );
+		WorldGen::GeneratorPeopleRooms generator( 5, 4, r );
 		printf( "Seed: %d", r );
 		// generator.Print();
 		generator.ShortPrint();
@@ -28,4 +29,3 @@ int main(int argc, char ** argv)
 	}
 	return 0;
 }
-

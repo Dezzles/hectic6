@@ -50,3 +50,9 @@ WorldGen::InfoForPlayer::InfoForPlayer( int Id )
 {
 
 }
+
+WorldGen::Item::Item( int Id )
+	: Data( Id, "Item" )
+{
+
+}

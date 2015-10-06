@@ -1,10 +1,10 @@
-#include "GeneratorPeopleRooms.h"
+#include "GeneratorPeopleRoomsItems.h"
 #include <cstdlib>
 
 #include "cpplinq.hpp"
-#include "Data.h"
-WorldGen::GeneratorPeopleRooms::GeneratorPeopleRooms( int People, int Hours, int Seed )
-	:Mapper_(People, Hours, Seed), Seed_(Seed)
+
+WorldGen::GeneratorPeopleRoomsItems::GeneratorPeopleRoomsItems( int People, int Hours, int Seed )
+	:Mapper_( People, Hours, Seed ), Seed_( Seed )
 {
 
 	Mapper_.NormaliseRooms();
@@ -14,8 +14,8 @@ WorldGen::GeneratorPeopleRooms::GeneratorPeopleRooms( int People, int Hours, int
 	int GuiltyY = -1;
 	int NormalRoomId = 0;
 
-	Mapper::Pair murderLocation = Mapper_.GetMurder();
 	Murder* Murder_ = DB_.Murders_.Create();
+	Mapper::Pair murderLocation = Mapper_.GetMurder();
 	Murder_->PersonId_ = murderLocation.X_;
 	Murder_->TimeId_ = murderLocation.Y_;
 	Murder_->RoomId_ = Mapper_.GetRoomIdNotInRow( murderLocation.Y_ );
@@ -58,7 +58,7 @@ WorldGen::GeneratorPeopleRooms::GeneratorPeopleRooms( int People, int Hours, int
 	}
 
 
-
+	
 
 	for ( int PersonIdx = 0; PersonIdx < Mapper_.Width_; ++PersonIdx )
 	{
@@ -92,11 +92,42 @@ WorldGen::GeneratorPeopleRooms::GeneratorPeopleRooms( int People, int Hours, int
 		}
 	}
 
+	int minRooms = 10000;
+	for ( int Idx0 = 0; Idx0 < Mapper_.Height_; ++Idx0 )
+	{
+		std::vector<int> rooms;
+		for ( int Idx1 = 0; Idx1 < Mapper_.Width_; ++Idx1 )
+		{
+			bool containsKey = false;
+			for ( int Idx2 = 0; Idx2 < rooms.size(); ++Idx2 )
+			{
+				if ( Mapper_.Data[ Idx0 ][ Idx1 ]  == rooms[ Idx2 ] )
+				{
+					containsKey = true;
+					break;
+				}
+			}
+			if ( !containsKey )
+			{
+				rooms.push_back( Mapper_.Data[ Idx0 ][ Idx1 ] );
+			}
+		}
+		if ( minRooms > rooms.size() )
+		{
+			minRooms = rooms.size();
+		}
+	}
+
+	for ( int Idx = 0; Idx < minRooms; ++Idx )
+	{
+		Item* item = DB_.Items_.Create();
+		
+	}
 	GenerateClues();
 }
 
 
-void WorldGen::GeneratorPeopleRooms::Print()
+void WorldGen::GeneratorPeopleRoomsItems::Print()
 {
 	Mapper_.Print();
 	printf( "\n" );
@@ -119,13 +150,23 @@ void WorldGen::GeneratorPeopleRooms::Print()
 	}
 
 	printf( "\tId\tRoom\tPerson\tStart\tFinish\n" );
-	for ( int Idx = 0; Idx < DB_.Information_.Size(); ++Idx )
+	for ( int Idx = 0; Idx <DB_.Information_.Size(); ++Idx )
 	{
 		Information* info = DB_.Information_.GetItem( Idx );
-		printf( "\t%d\t%d\t%d\t%d\t%d\n", info->Id_, info->RoomId_, info->PersonId_, info->StartTimeId_, info->EndTimeId_ );
+		printf( "\t%d\t%d\t%d\t%d\t%d\n", info->Id_, info->RoomId_, info->GetPerson()->Id_, info->StartTimeId_, info->EndTimeId_ );
 	}
 	printf( "\n" );
 
+
+	printf("Items");
+	printf( "\tId\tRoom\tPerson\tStart\tFinish\n" );
+	for ( int Idx = 0; Idx < DB_.Items_.Size(); ++Idx )
+	{
+		Item* item = DB_.Items_.GetItem( Idx );
+		printf( "\t%d\n", item->Id_ );
+	}
+
+	printf("\n");
 	using namespace cpplinq;
 
 	Murder* Murder_ = DB_.Murders_.GetItem(0);
@@ -146,7 +187,7 @@ void WorldGen::GeneratorPeopleRooms::Print()
 	}
 }
 
-void WorldGen::GeneratorPeopleRooms::ShortPrint()
+void WorldGen::GeneratorPeopleRoomsItems::ShortPrint()
 {
 	printf( "\n" );
 	printf( "Seed: %d\n", Seed_ );
@@ -171,12 +212,11 @@ void WorldGen::GeneratorPeopleRooms::ShortPrint()
 			printf( "\t%c\t%c\t%d-%d\n", p->Information_[ Idx2 ]->RoomId_ + 'Q', p->Information_[ Idx2 ]->TargetId_ + 'A',
 				p->Information_[ Idx2 ]->StartTimeId_ + 13, p->Information_[ Idx2 ]->EndTimeId_ + 13 );
 		}
-
 		printf( "\n" );
 	}
 }
 
-void WorldGen::GeneratorPeopleRooms::GenerateClues()
+void WorldGen::GeneratorPeopleRoomsItems::GenerateClues()
 {
 	using namespace cpplinq;
 	auto c2 = from_iterators( DB_.Information_.Internal().begin(), DB_.Information_.Internal().end() )
@@ -224,7 +264,7 @@ void WorldGen::GeneratorPeopleRooms::GenerateClues()
 		data->RoomId_ = infoA->RoomId_;
 		DB_.People_.GetItemById( data->PersonId_ )->Information_.Add( data );
 	}
-	
+
 	for ( int Counter = 0; Counter < 3; ++Counter )
 	{
 		for ( int Idx = 0; Idx < DB_.PlayerInfo_.Size(); ++Idx )
@@ -241,17 +281,17 @@ void WorldGen::GeneratorPeopleRooms::GenerateClues()
 				int t = data->PersonId_;
 				data->PersonId_ = data->TargetId_;
 				data->TargetId_ = t;
-
-				pB->Information_.Add(data);
-				for ( auto iter = pA->Information_.Begin(); iter != pA->Information_.End(); ++iter )
+				auto Information = pB->Information_.GetInformation_();
+				Information.push_back( data );
+				for ( auto iter = Information.begin(); iter != Information.end(); ++iter )
 				{
 					if ( *iter == data )
 					{
-						pA->Information_.Remove( *iter );
+						Information.erase( iter );
 						break;
 					}
 				}
-					
+
 			}
 		}
 	}/**/

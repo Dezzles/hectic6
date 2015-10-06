@@ -1,69 +1,13 @@
 #pragma once
+#include "Database.h"
 #include <string>
 #include <vector>
 namespace WorldGen
 {
+	class Database;
+	class Murder;
 	class InfoForPlayer;
-	template < class T >
-	class Wrapper
-	{
-	public:
-		T* Create()
-		{
-			int newId = NextId;
-			++NextId;
-			return Create( newId );
-		}
-
-		T* Create( int NewId )
-		{
-			if ( GetItemById( NewId ) == nullptr )
-				Data.push_back( new T( NewId ) );
-			return GetItemById( NewId );
-		}
-
-		void Remove( int Id )
-		{
-			for ( int Idx = 0; Idx < Data.size(); ++Idx )
-			{
-				if ( Data[ Idx ]->Id_ == Id )
-				{
-					Data.erase(Data.begin() + Idx);
-					return;
-				}
-			}
-		}
-
-		T* GetItemById( int Id )
-		{
-			for ( unsigned int Idx = 0; Idx < Data.size(); ++Idx )
-			{
-				if ( Data[ Idx ]->Id_ == Id )
-				{
-					return Data[ Idx ];
-				}
-			}
-			return nullptr;
-		}
-
-		T* GetItem( int Pos )
-		{
-			return Data[ Pos ];
-		}
-
-		size_t Size()
-		{
-			return Data.size();
-		}
-
-		std::vector<T*>& Internal()
-		{
-			return Data;
-		}
-	private:
-		std::vector< T* > Data;
-		int NextId = 0;
-	};
+	class Item;
 
 	class Data
 	{
@@ -73,6 +17,7 @@ namespace WorldGen
 		int Id_;
 
 		std::string ToString();
+		Database* Database_;
 	private: 
 		std::string ClassName_;
 	};
@@ -91,7 +36,8 @@ namespace WorldGen
 	{
 	public:
 		Person( int Id );
-		std::vector<InfoForPlayer*> Information_;
+		std::vector<int> InformationIds_;
+		MAP_MANY(Information_, PlayerInfo_, InfoForPlayer, InformationIds_, Person);
 	};
 
 	class Time
@@ -110,6 +56,9 @@ namespace WorldGen
 		int EndTimeId_;
 		int PersonId_;
 		int RoomId_;
+
+		MAP_ONE(Person, People_, Person, PersonId_);
+		MAP_ONE(Room, Rooms_, Room, RoomId_);
 	};
 
 	class Murder
@@ -120,6 +69,11 @@ namespace WorldGen
 		int RoomId_;
 		int TimeId_;
 		int PersonId_;
+		int ItemId_;
+
+		MAP_ONE(Room, Rooms_, Room, RoomId_);
+		MAP_ONE(Person, People_, Person, PersonId_);
+		MAP_ONE(Item, Items_, Item, ItemId_);
 	};
 
 	class InfoForPlayer
@@ -133,6 +87,17 @@ namespace WorldGen
 		int EndTimeId_;
 		int PersonId_;
 		int TargetId_;
+
+		MAP_ONE( Room, Rooms_, Room, RoomId_ );
+		MAP_ONE( Person, People_, Person, PersonId_ );
+		MAP_ONE( Target, People_, Person, TargetId_ );
 	};
 
+	class Item
+		: public Data
+	{
+	public:
+		Item( int Id );
+
+	};
 }

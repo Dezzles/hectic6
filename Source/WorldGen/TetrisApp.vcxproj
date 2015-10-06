@@ -55,6 +55,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -80,12 +81,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Data.cpp" />
+    <ClCompile Include="Database.cpp" />
     <ClCompile Include="Generator.cpp" />
+    <ClCompile Include="GeneratorPeopleRoomsItems.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mapper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Generator.h" />
+    <ClInclude Include="BaseGenerator.h" />
+    <ClInclude Include="Database.h" />
+    <ClInclude Include="DataSet.h" />
+    <ClInclude Include="GeneratorPeopleRooms.h" />
+    <ClInclude Include="GeneratorPeopleRoomsItems.h" />
     <ClInclude Include="Mapper.h" />
     <ClInclude Include="Data.h" />
   </ItemGroup>
